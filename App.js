@@ -30,6 +30,7 @@ export default function App() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [token, setToken] = useState('');
 
   return (
     <>
@@ -59,18 +60,17 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  header:{
+  header: {
     width: '100%',
     height: '100px',
     backgroundColor: 'blue',
   },
-  image :{
+  image: {
     marginBottom: 40,  
     width:'33%',
     height:'15%',
     borderRadius: '50%',
   },
-
    inputView: {
     backgroundColor: '#a9aba0',
     borderRadius: 30,
@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
     height: 50,
     flex: 1,
     padding: 10,
-    marginLeft: 20,
   },
   container: {
     flex: 1,
