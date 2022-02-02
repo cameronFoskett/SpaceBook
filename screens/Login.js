@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity } from 'react-native';
 
 import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
-import CreateAccount from '../screens/CreateAccount.js';
+import UserManagment from '../roots/UserManagment.js'
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -13,7 +13,6 @@ const Login = ({navigation}) => {
 
 
   async function handleLogin(){
-      
     try {
         const response = await fetch("http://localhost:3333/api/1.0.0/login",
         {
@@ -26,6 +25,8 @@ const Login = ({navigation}) => {
         });
         const data = await response.json();
         setToken(data.token);
+        navigation.navigate('Profile');
+
         setEmail('');
         setPassword('');
         setError('');

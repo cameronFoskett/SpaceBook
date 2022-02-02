@@ -34,6 +34,11 @@ const Auth = () => {
           },
         }}
       />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };
