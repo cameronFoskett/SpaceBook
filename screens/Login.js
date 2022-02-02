@@ -13,29 +13,29 @@ const Login = ({navigation}) => {
 
 
   async function handleLogin(){
-    let history = useHistory();
+      
+    try {
+        const response = await fetch("http://localhost:3333/api/1.0.0/login",
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
+        const data = await response.json();
+        setToken(data.token);
+        setEmail('');
+        setPassword('');
+        setError('');
 
-    const response = await fetch("http://localhost:3333/api/1.0.0/login",
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        email: email,
-        password: password
-      })
-    })
-    .catch((error) => {
-      console.error("error");
-    });
-    const data = await response.json();
-    console.log(data);
-    if(!data){
+        return response;    
+    } catch (e) {
         setError('An error occured please try again...');
     }
-    else {
-        setToken(data.token);
-        return response;
-    }
+
+    return null;
   }
 
   return (
@@ -49,6 +49,7 @@ const Login = ({navigation}) => {
                 placeholder="Enter email"
                 placeholderTextColor="#003f5c"
                 onChangeText={(email) => setEmail(email)}
+                value={email}
             />
         </View>
         <View style={styles.inputView}>
@@ -58,11 +59,13 @@ const Login = ({navigation}) => {
                 placeholderTextColor="#003f5c"
                 secureTextEntry={true}
                 onChangeText={(password) => setPassword(password)}
+                value={password}
             />
         </View> 
         <TouchableOpacity onPress={()=>navigation.navigate('CreateAccount')}>
             <Text style={styles.newAccount}>Don't have an account?</Text>
         </TouchableOpacity> 
+        {!!error && <Text style={styles.error}>{error}</Text>}
         <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
             <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity> 
@@ -78,6 +81,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100px',
     backgroundColor: 'blue',
+  },
+  error: {
+    color: 'red',
   },
   image: {
     marginBottom: 40,  
