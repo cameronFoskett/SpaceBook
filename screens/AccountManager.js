@@ -3,12 +3,12 @@ import { StyleSheet, Image, View, Text } from 'react-native';
 
 import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
 
-export default function Friends() {
+export default function AccountManager() {
   return (
     <>
       <View style={styles.container}>
         <Image source={spaceBookLogo} />
-        <Text> friends </Text>
+        <Text> account manager </Text>
       </View>
     </>
   );
