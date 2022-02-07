@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
 import UserManagment from '../roots/UserManagment.js'
@@ -8,9 +9,17 @@ import UserManagment from '../roots/UserManagment.js'
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [token, setToken] = useState('');
   const [error, setError] = useState('');
 
+
+const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('@spacebook_details', jsonValue);
+    } catch (e) {
+        console.error(error);
+    }
+}
 
   async function handleLogin(){
     try {
@@ -24,7 +33,8 @@ const Login = ({navigation}) => {
             })
         });
         const data = await response.json();
-        setToken(data.token);
+        storeData(data);
+
         navigation.navigate('Profile');
 
         setEmail('');
@@ -78,11 +88,6 @@ const Login = ({navigation}) => {
 export default Login;
 
 const styles = StyleSheet.create({
-  header: {
-    width: '100%',
-    height: '100px',
-    backgroundColor: 'blue',
-  },
   error: {
     color: 'red',
   },

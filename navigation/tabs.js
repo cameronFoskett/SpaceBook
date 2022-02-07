@@ -30,7 +30,7 @@ const Tabs = () => {
                 },
             }}
         >
-            <Tab.Screen name="a" component={Login} options={{
+            <Tab.Screen name="Login" component={Login} options={{
                 tabBarIcon: ({focused}) =>(
                     <View style={{alignItems:'center', justifyContent:'center', top:10}}>
                     <Image 

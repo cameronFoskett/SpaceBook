@@ -39,7 +39,7 @@ const Auth = () => {
         component={Profile}
         options={{headerShown: false}}
       />
-    </Stack.Navigator>
+    </Stack.Navigator> 
   );
 };
 
