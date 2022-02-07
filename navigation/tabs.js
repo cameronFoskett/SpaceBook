@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {StyleSheet, Text, View, Image, TouchableOppacity} from 'react-native';
 
 import Login from '../screens/Login';
+import AccountManager from '../screens/AccountManager'
 import Friends from '../screens/Friends';
 import Profile from '../screens/Profile';
 
@@ -30,7 +31,7 @@ const Tabs = () => {
                 },
             }}
         >
-            <Tab.Screen name="Login" component={Login} options={{
+            <Tab.Screen name="Profile" component={Login} options={{
                 tabBarIcon: ({focused}) =>(
                     <View style={{alignItems:'center', justifyContent:'center', top:10}}>
                     <Image 
@@ -43,7 +44,7 @@ const Tabs = () => {
                         }}
                     />
                     {focused &&
-                    <Text style={{color: focused ? '#e32f45' : '#748c94', fontSize:12}}>Home</Text>}
+                    <Text style={{color: focused ? '#e32f45' : '#748c94', fontSize:12}}>Profile</Text>}
                     </View>
                 ),
             }}/>
@@ -60,11 +61,11 @@ const Tabs = () => {
                         }}
                     />
                     {focused &&
-                    <Text style={{color: focused ? '#e32f45' : '#748c94', fontSize:12}}>Tickets</Text>}
+                    <Text style={{color: focused ? '#e32f45' : '#748c94', fontSize:12}}>Friends</Text>}
                     </View>
                 ),
             }}/>
-            <Tab.Screen name="Profile" component={Profile} options={{
+            <Tab.Screen name="Account Manager" component={AccountManager} options={{
                 tabBarIcon: ({focused}) =>(
                     <View style={{alignItems:'center', justifyContent:'center', top:10}}>
                     <Image 
@@ -77,7 +78,7 @@ const Tabs = () => {
                         }}
                     />
                     {focused &&
-                    <Text style={{color: focused ? '#e32f45' : '#748c94', fontSize:12}}>Support</Text>}
+                    <Text style={{color: focused ? '#e32f45' : '#748c94', fontSize:12}}>Settings</Text>}
                     </View>
                 ),
             }}/>
