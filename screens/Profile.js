@@ -13,7 +13,7 @@ const Profile = () => {
   const [userData, setUserData] = useState('');
   const [userPhoto, setUserPhoto] = useState('');
   const [auth, setAuth] = useState('');
-
+  const [loading, setLoading] = useState(true);
 
 const getUserData = async () => {
   try {
@@ -33,8 +33,14 @@ const getUserData = async () => {
             {
                 method: 'GET',
                 headers: { 'Content-Type': 'image/jpeg', 'X-Authorization':data.token},
+            }).then((res) => {
+                return res.blob();
+              }).then((resBlob) => {
+              let data = URL.createObjectURL(resBlob);
+              setUserPhoto(data);
+              setLoading(false);
             });
-            setUserPhoto(photoRes);
+
         }
         catch (e) {
             console.log('An error occured please loading your profile picture try again...');
@@ -58,8 +64,17 @@ useEffect(() =>{
     <>
       <View style={styles.container}>
         <View style={styles.head}>
-            <Image source={{uri: userPhoto}}/>
-            <Text style={styles.name}>{userData.first_name} {userData.last_name}</Text>
+          {loading ? <Text> ...Loading </Text> :
+          <>
+          <Image
+            source={{
+              uri: userPhoto,
+            }}
+            style={styles.image}
+          />       
+          <Text style={styles.name}>{userData.first_name} {userData.last_name}</Text>
+          </>
+          }
         </View>
       </View>
     </>
@@ -73,14 +88,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#6c94ac",    
   },
+  image:{
+    width: 100,
+    height: 100,
+    borderRadius:"50%",
+  },
   head:{
-      display: 'flex', 
+      display: 'flex',
+      marginTop:"10%",
+      marginLeft:"5%",
+      flexDirection:"row", 
   },
   name: {
       textAlign: 'right',
       color: '#2f5476',
-      paddingTop: '34%',
-      paddingRight: '5%',
+      paddingTop: '8%',
+      paddingLeft:"10%",
       fontWeight: 'bold',
       fontSize: '2rem',
     },
