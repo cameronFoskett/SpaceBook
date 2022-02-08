@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity } from 'reac
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
-import UserManagment from '../roots/UserManagment.js'
+import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -14,8 +14,7 @@ const Login = ({navigation}) => {
 
 const storeData = async (value) => {
     try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem('@spacebook_details', jsonValue);
+      await CustomAsyncStorage.saveData(value);
     } catch (e) {
         console.error(error);
     }

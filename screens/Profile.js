@@ -1,8 +1,11 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import { StyleSheet, Image, View, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationContainer } from '@react-navigation/native';
+
 
 import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
+import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 import Tabs from '../navigation/tabs';
 
 const Profile = () => {
@@ -11,54 +14,44 @@ const Profile = () => {
   const [userPhoto, setUserPhoto] = useState('');
   const [auth, setAuth] = useState('');
 
-  const getData = async (done) => {
-    try {
-        const jsonValue = await AsyncStorage.getItem('@spacebook_details');
-        const data = JSON.parse(jsonValue);
-        
-        return done(data);
-    } catch(e) {
-        console.error(e);
-    }
-  }
 
-  async function findUser(){
+const getUserData = async () => {
+  try {
+    const data = await CustomAsyncStorage.getData();
+    if (data !== null) {
+      setAuth(data);
       try{
-        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}`,
+        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}`,
         {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+            headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
         });
         const tempUserData = await response.json();
         setUserData(tempUserData);
-      }
-      catch (e) {
-        console.log('An error occured please try again...');
-    }
-  }
-
-  async function getUserImage(){
-      try{
-            const photoRes = await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}/photo`,
+        try{
+            const photoRes = await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}/photo`,
             {
                 method: 'GET',
-                headers: { 'Content-Type': 'image/jpeg', 'X-Authorization':auth.token},
+                headers: { 'Content-Type': 'image/jpeg', 'X-Authorization':data.token},
             });
             setUserPhoto(photoRes);
         }
         catch (e) {
             console.log('An error occured please loading your profile picture try again...');
         }
+      }
+      catch (e) {
+        console.log('An error occured please try again...');
+    }
+    }
+  } catch (e) {
+    alert('Failed to fetch the data from storage')
+    console.log(e);
   }
+}
 
 useEffect(() =>{
-    getData((data) => {
-        console.log("data", data)
-        setAuth(data);
-        console.log("userdata", auth)
-    });
-    findUser();
-    getUserImage();
+    getUserData();
 }, []);
 
   return (
