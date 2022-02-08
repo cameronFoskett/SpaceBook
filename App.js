@@ -6,6 +6,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Login from './screens/Login.js';
 import CreateAccount from './screens/CreateAccount.js';
 import Profile from './screens/Profile.js';
+import Home from './screens/Home.js';
 import Friends from './screens/Friends.js';
 
 import Tabs from './navigation/tabs';
@@ -35,8 +36,8 @@ const Auth = () => {
         }}
       />
       <Stack.Screen
-        name="Profile"
-        component={Profile}
+        name="Home"
+        component={Home}
         options={{headerShown: false}}
       />
     </Stack.Navigator> 

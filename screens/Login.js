@@ -34,7 +34,7 @@ const storeData = async (value) => {
         const data = await response.json();
         storeData(data);
 
-        navigation.navigate('Profile');
+        navigation.navigate('Home');
 
         setEmail('');
         setPassword('');
