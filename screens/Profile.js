@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import { StyleSheet, Image, View, Text } from 'react-native';
+import { StyleSheet, Image, View, Text, FlatList, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -13,7 +13,10 @@ const Profile = () => {
   const [userData, setUserData] = useState('');
   const [userPhoto, setUserPhoto] = useState('');
   const [auth, setAuth] = useState('');
+  const [posts, setPosts] = useState([]);
+  const [newPost, setNewPost] = useState('');
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(true);
 
 const getUserData = async () => {
   try {
@@ -29,7 +32,7 @@ const getUserData = async () => {
         const tempUserData = await response.json();
         setUserData(tempUserData);
         try{
-            const photoRes = await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}/photo`,
+            await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}/photo`,
             {
                 method: 'GET',
                 headers: { 'Content-Type': 'image/jpeg', 'X-Authorization':data.token},
@@ -40,10 +43,21 @@ const getUserData = async () => {
               setUserPhoto(data);
               setLoading(false);
             });
-
+            try{
+                const userPosts = await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}/post`,
+                {
+                  method: 'GET',
+                  headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
+               });
+                const tempUserPosts = await userPosts.json();
+                setPosts(tempUserPosts);
+              }
+              catch (e) {
+                  console.log(e);
+              }
         }
         catch (e) {
-            console.log('An error occured please loading your profile picture try again...');
+            console.log(e);
         }
       }
       catch (e) {
@@ -56,28 +70,78 @@ const getUserData = async () => {
   }
 }
 
+async function handleCreatePost(){
+  try{
+      await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}/post`,
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+                  body: JSON.stringify({
+                      text: newPost
+                    })
+               });
+               setNewPost('');
+               setRefresh(!refresh);
+    }
+  catch(e){
+    console.log("An error occurred posting!")
+  }
+}
+
 useEffect(() =>{
     getUserData();
 }, []);
 
   return (
-    <>
       <View style={styles.container}>
-        <View style={styles.head}>
           {loading ? <Text> ...Loading </Text> :
           <>
-          <Image
-            source={{
-              uri: userPhoto,
-            }}
-            style={styles.image}
-          />       
-          <Text style={styles.name}>{userData.first_name} {userData.last_name}</Text>
+          <View style={styles.head}>
+            <>
+            <Image
+              source={{
+                uri: userPhoto,
+              }}
+              style={styles.image}
+            />       
+            <Text style={styles.name}>{userData.first_name} {userData.last_name}</Text>
+            </>
+          </View>
+          <ScrollView style={styles.body}>
+          <View style={styles.createPost}>
+          <Text style={styles.createText}>Create new post! 
+            <TouchableOpacity style={styles.postButton} onPress={handleCreatePost}>
+              <Text>
+                Post
+              </Text>
+            </TouchableOpacity>
+          </Text>
+          <TextInput
+                style={styles.TextInput}
+                placeholder="Start jotting down your out of the world thoughts..."
+                placeholderTextColor="#003f5c"
+                onChangeText={(newPost) => setNewPost(newPost)}
+                value={newPost}
+            />
+            </View>
+            <FlatList
+              data={posts}
+              extraData={refresh}
+              renderItem={({item}) => 
+                <View style={styles.postBox}>
+                  <Text>
+                    {item.author.first_name} {item.author.last_name} Posted on: {new Date (item.timestamp).toLocaleDateString()}
+                  </Text>
+                  <Text style={styles.text}>{item.text}</Text>
+                  <Text style={styles.likes}>Likes: {item.numLikes}</Text>
+                  
+                </View>
+                }
+            />
+          </ScrollView>
           </>
           }
-        </View>
       </View>
-    </>
   );
 }
 
@@ -93,6 +157,11 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius:"50%",
   },
+  createPost: {
+    height: 150,
+    padding: 10,
+    backgroundColor: '#9FD2FF',
+  },
   head:{
       display: 'flex',
       marginTop:"10%",
@@ -107,4 +176,42 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       fontSize: '2rem',
     },
+  body:{
+    paddingTop:"10%",
+    flex: 1,
+  },
+  postBox: {
+    padding:5,
+    margin:10,
+    backgroundColor: '#9FD2FF',
+    borderRadius:20,
+    height:120,
+  },
+  likes:{
+    position:'absolute',
+    bottom:10,
+  },
+  createText:{
+    paddingBottom:"5%",
+    fontSize:"1.1rem",
+    flexDirection: 'row',
+  },
+  text:{
+    paddingTop:"5%",
+    paddingBottom:"inherit",
+    fontSize:"1.1rem",
+  },
+  TextInput:{
+    height:100,
+    backgroundColor: 'white',
+    borderRadius:10,
+    padding:10,
+  },
+  postButton:{  
+    position: 'absolute',
+    right: 20,
+    backgroundColor: '#2f5476',
+    color: 'white',
+    padding:5,
+  },
 });
