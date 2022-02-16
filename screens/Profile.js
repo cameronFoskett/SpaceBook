@@ -16,7 +16,7 @@ const Profile = () => {
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState('');
   const [loading, setLoading] = useState(true);
-  const [refresh, setRefresh] = useState(true);
+  const [refresh, setRefresh] = useState(false);
 
 const getUserData = async () => {
   try {
@@ -90,7 +90,7 @@ async function handleCreatePost(){
 
 useEffect(() =>{
     getUserData();
-}, []);
+}, [refresh]);
 
   return (
       <View style={styles.container}>
@@ -126,9 +126,9 @@ useEffect(() =>{
             </View>
             <FlatList
               data={posts}
-              extraData={refresh}
+              extraData={{refresh}}
               renderItem={({item}) => 
-                <View style={styles.postBox}>
+                <View style={styles.postBox} key={item.post_id}>
                   <Text>
                     {item.author.first_name} {item.author.last_name} Posted on: {new Date (item.timestamp).toLocaleDateString()}
                   </Text>
@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
       marginTop:"10%",
       marginLeft:"5%",
       flexDirection:"row", 
+      position: 'relative',
   },
   name: {
       textAlign: 'right',
