@@ -32,7 +32,7 @@ const getUserData = async () => {
         const tempUserData = await response.json();
         setUserData(tempUserData);
         try{
-            await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}/photo`,
+            await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}/photo?`+Date.now(),
             {
                 method: 'GET',
                 headers: { 'Content-Type': 'image/jpeg', 'X-Authorization':data.token},
