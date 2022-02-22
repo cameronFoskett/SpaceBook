@@ -9,6 +9,7 @@ import Profile from './screens/Profile.js';
 import Home from './screens/Home.js';
 import Friends from './screens/Friends.js';
 import CustomCamera from './screens/CustomCamera.js';
+import FriendProfile from './screens/FriendProfile.js';
 
 import Tabs from './navigation/tabs';
 
@@ -40,6 +41,11 @@ const Auth = () => {
         name="Home"
         component={Home}
         options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="FriendProfile"
+        component={FriendProfile}
+        initialParams={{ friendID: 42 }}
       />
       <Stack.Screen
         name="Camera"

@@ -1,0 +1,231 @@
+import React, {useState, useEffect, useCallback} from 'react';
+import { StyleSheet, Image, View, Text, FlatList, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationContainer } from '@react-navigation/native';
+
+
+import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
+import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
+import Tabs from '../navigation/tabs';
+
+const FriendProfile = (friendID) => {
+
+  const [userData, setUserData] = useState('');
+  const [userPhoto, setUserPhoto] = useState('');
+  const [auth, setAuth] = useState('');
+  const [posts, setPosts] = useState([]);
+  const [newPost, setNewPost] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(false);
+  const friend_id = friendID.route.params.friendID;
+
+const getUserData = async () => {
+  try {
+    const data = await CustomAsyncStorage.getData();
+    if (data !== null) {
+      setAuth(data);
+      try{
+        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}`,
+        {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
+        });
+        const tempUserData = await response.json();
+        setUserData(tempUserData);
+        try{
+            await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/photo?`+Date.now(),
+            {
+                method: 'GET',
+                headers: { 'Content-Type': 'image/jpeg', 'X-Authorization':data.token},
+            }).then((res) => {
+                return res.blob();
+              }).then((resBlob) => {
+              let data = URL.createObjectURL(resBlob);
+              setUserPhoto(data);
+              setLoading(false);
+            });
+            try{
+                const userPosts = await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post`,
+                {
+                  method: 'GET',
+                  headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
+               });
+                const tempUserPosts = await userPosts.json();
+                setPosts(tempUserPosts);
+              }
+              catch (e) {
+                  console.log(e);
+              }
+        }
+        catch (e) {
+            console.log(e);
+        }
+      }
+      catch (e) {
+        console.log('An error occured please try again...');
+    }
+    }
+  } catch (e) {
+    alert('Failed to fetch the data from storage')
+    console.log(e);
+  }
+}
+
+useEffect(() =>{
+    getUserData();
+}, [refresh]);
+
+  const handleLike = async (post_id) => {
+     try{
+       const tryLike = await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post/${post_id}/like`,
+          {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+          });
+      const data = await tryLike.json();
+      console.log(data);
+     }
+     catch(e){
+       if(e === "200"){
+         try{
+          const tryDislike = await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post/${post_id}/like`,
+              {
+                  method: 'DELETE',
+                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+              });
+          const data = await tryLike.json();
+          console.log(data);
+        }catch(e){console.log(e);}
+       }
+       console.log(e);
+     }
+    setRefresh(!refresh);
+  }
+
+  return (
+      <View style={styles.container}>
+          {loading ? <Text> ...Loading </Text> :
+          <>
+          <View style={styles.head}>
+            <>
+            <Image
+              source={{
+                uri: userPhoto,
+              }}
+              style={styles.image}
+            />       
+            <Text style={styles.name}>{userData.first_name} {userData.last_name}</Text>
+            </>
+          </View>
+          <ScrollView style={styles.body}>
+            <FlatList
+              data={posts}
+              extraData={{refresh}}
+              renderItem={({item}) => 
+                <View style={styles.postBox} key={item.post_id}>
+                  <Text>
+                    {item.author.first_name} {item.author.last_name} Posted on: {new Date (item.timestamp).toLocaleDateString()}
+                  </Text>
+                  <Text style={styles.text}>{item.text}</Text>
+                  <Text style={styles.likes}>Likes: {item.numLikes}</Text>
+                  <TouchableOpacity style={styles.button} onPress={()=>handleLike(item.post_id)}>
+                    <Image source={require('../assets/like.png')} style={styles.likeImage} />
+                  </TouchableOpacity>
+                </View>
+                }
+            />
+          </ScrollView>
+          </>
+          }
+      </View>
+  );
+}
+
+export default FriendProfile;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#6c94ac",    
+  },
+  image:{
+    width: 100,
+    height: 100,
+    borderRadius:"50%",
+  },
+  likeImage:{
+    width:20,
+    height:20,
+  },
+  createPost: {
+    height: 150,
+    padding: 10,
+    backgroundColor: '#9FD2FF',
+  },
+  head:{
+      display: 'flex',
+      marginTop:"10%",
+      marginLeft:"5%",
+      flexDirection:"row", 
+      position: 'relative',
+  },
+  logoutImage: {
+    width:30,
+    height:30,
+  },
+  logout:{
+    marginLeft: 'auto',
+    top: '-20%',
+    marginRight:10,
+  },
+  name: {
+      textAlign: 'right',
+      color: '#2f5476',
+      paddingTop: '8%',
+      paddingLeft:"5%",
+      fontWeight: 'bold',
+      fontSize: '1.7rem',
+    },
+  body:{
+    paddingTop:"10%",
+    flex: 1,
+  },
+  postBox: {
+    padding:5,
+    margin:10,
+    backgroundColor: '#9FD2FF',
+    borderRadius:20,
+    height:120,
+  },
+  likes:{
+    position:'absolute',
+    bottom:10,
+  },
+  createText:{
+    paddingBottom:"5%",
+    fontSize:"1.1rem",
+    flexDirection: 'row',
+  },
+  text:{
+    paddingTop:"5%",
+    paddingBottom:"inherit",
+    fontSize:"1.1rem",
+  },
+  TextInput:{
+    height:100,
+    backgroundColor: 'white',
+    borderRadius:10,
+    padding:10,
+  },
+  postButton:{  
+    position: 'absolute',
+    right: 20,
+    backgroundColor: '#2f5476',
+    color: 'white',
+    padding:5,
+  },
+  button: {
+    marginLeft: 'auto',
+    marginTop: '7%',
+  },
+});

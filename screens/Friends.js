@@ -4,7 +4,7 @@ import { StyleSheet, Image, View, Text, ScrollView, TouchableOpacity, TextInput 
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 
-export default function Friends() {
+export default function Friends({navigation}) {
 const [auth, setAuth] = useState('');
 const [friends, setFriends] = useState('');
 const [loading, setLoading] = useState(true);
@@ -77,17 +77,16 @@ useEffect(() =>{
     findUsers();
     addFriend();
 }, []);
-
   
   const LoadFriends = () => {
     for (let i = 0; i < friends.length; i++) {
         return friends.map((f) =>
-        <View style={styles.friendBox} key={f.user_id}>
+        <TouchableOpacity 
+          style={styles.friendBox} 
+          key={f.user_id} 
+          onPress={() => navigation.navigate('FriendProfile',{friendID: f.user_id})}>
           <Text style={styles.textBox}>{f.user_givenname} {f.user_familyname}</Text>
-          <TouchableOpacity style={styles.button}>
-            <Image source={require('../assets/delete.png')} style={styles.image} />
-          </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
         );
     }
   }
