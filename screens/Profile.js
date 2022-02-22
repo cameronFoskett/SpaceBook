@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
       paddingTop: '8%',
       paddingLeft:"5%",
       fontWeight: 'bold',
-      fontSize: '2rem',
+      fontSize: '1.7rem',
     },
   body:{
     paddingTop:"10%",

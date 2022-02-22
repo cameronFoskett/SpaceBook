@@ -73,6 +73,9 @@ const getUserData = async () => {
               password: userInfo.password
             })
           });
+          
+          await CustomAsyncStorage.removeData();
+          navigation.navigate("Login");
           }
     catch (e) {
         console.log(e);
