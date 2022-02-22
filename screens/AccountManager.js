@@ -11,7 +11,6 @@ const [auth, setAuth] = useState('');
 const [newPhoto, setNewPhoto] = useState();
 const [hasPermission, setHasPermission] = useState('');
 const [error, setError] = useState('');
-const[isCameraOpen, setCameraOpen] = useState(false);
 const [type, setType] = useState(Camera.Constants.Type.back);
 
 const getUserData = async () => {
@@ -24,72 +23,18 @@ const getUserData = async () => {
     alert('Failed to fetch the data from storage');
     console.log(e);
   }
-}
-  // const handleChoosePhoto = async () => {
-    // console.log("here");
-    // setCameraOpen(true);
-    // const { status } = await Camera.requestCameraPermissionsAsync();
-    // if(status === 'granted'){
-    //   setHasPermission(status);
-
-    // }else{
-    //   setError("You need to allow access to the devices camera for this feature.")
-    // }
-  // };
-
-  
+} 
   async function handleChoosePhoto(){
-
-    console.log("camera");
     const { status } = await Camera.requestCameraPermissionsAsync();
     if(status === 'granted'){
-      // setCameraOpen(true);
       navigation.navigate('Camera');
     }
-    
-      }
-    // setCameraOpen(true);
-    // if(status === 'granted'){
-    //   setHasPermission(status);
-
-    // }else{
-    //   setError("You need to allow access to the devices camera for this feature.")
-    // }
-  
-
-async function updatePhoto(){
-    try {
-        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}/photo`,
-        {
-            method: 'POST',
-            headers: { 'Content-Type': 'image/png'},
-            body: photo,
-        });
-        const data = await response.json();
-        console.log(data);
-        return response;    
-    } catch (e) {
-        console.log(e);
-    }
-
-    return null;
   }
 
 useEffect(() =>{
     getUserData();
 }, []);
 
-if(isCameraOpen){
-  return (
-    <View style={styles.container}>
-      <Text>Hello</Text>
-      <Camera 
-        style={styles.camera} 
-      >
-      </Camera>
-    </View>
-  )
-}else{
   return (
     <>
       <View style={styles.container}>
@@ -103,7 +48,6 @@ if(isCameraOpen){
       </View>
     </>
   );
-}
 }
 
 const styles = StyleSheet.create({

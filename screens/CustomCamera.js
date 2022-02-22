@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
+import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
-export default function CustomCamera() {
+export default function CustomCamera({navigation}) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+  const cameraRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -13,53 +15,91 @@ export default function CustomCamera() {
     })();
   }, []);
 
-  if (hasPermission === null) {
-    return <View />;
+  async function takePicture(){
+            const options = {
+                quality: 0.5, 
+                base64: true,
+                onPictureSaved: (data) => updatePhoto(data)
+            };
+            const photo = await cameraRef.current.takePictureAsync(options);
+    }
+
+    async function updatePhoto(data){
+    try {
+      const userData = await CustomAsyncStorage.getData();
+
+      let res = await fetch(data.base64);
+      let blob = await res.blob();
+
+        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${userData.id}/photo`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'image/png', 'X-Authorization':userData.token},
+            body: blob,
+        });
+        navigation.navigate("Profile");        
+        return response;    
+    } catch (e) {
+        console.log(e);
+    }
+
+    return null;
   }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
+
   return (
-    <View style={styles.container}>
-      <Camera style={styles.camera} type={type}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              setType(
-                type === Camera.Constants.Type.back
-                  ? Camera.Constants.Type.front
-                  : Camera.Constants.Type.back
-              );
-            }}>
-            <Text style={styles.text}> Flip </Text>
-          </TouchableOpacity>
+    <>
+    {!hasPermission ? 
+      <><Text>No access to camera</Text></> : 
+      <>
+        <View style={styles.container}>
+          <Camera 
+            style={styles.camera} 
+            type={Camera.Constants.Type.front}
+            ref={cameraRef}
+          >
+          </Camera>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={takePicture}>
+                <Text style={styles.text}> Take Photo </Text>
+              </TouchableOpacity>
+            </View>
         </View>
-      </Camera>
-    </View>
+      </>
+    }
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#6c94ac",
   },
   camera: {
-    flex: 1,
+    height:"70%",
+    top: "25%",
+
   },
   buttonContainer: {
     flex: 1,
     backgroundColor: 'transparent',
     flexDirection: 'row',
-    margin: 20,
+    justifyContent: "center", 
   },
   button: {
-    flex: 0.1,
-    alignSelf: 'flex-end',
-    alignItems: 'center',
+    width: "80%",
+    borderRadius: 25,
+    height: 50,
+    justifyContent: "center",
+    textAlign: "center",
+    marginTop: "60%",
+    backgroundColor: "#2f5476",
+    color:'white',
   },
   text: {
-    fontSize: 18,
-    color: 'white',
+    fontSize: "1.5rem",
+    color: 'black',
   },
 });
