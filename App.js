@@ -8,6 +8,7 @@ import CreateAccount from './screens/CreateAccount.js';
 import Profile from './screens/Profile.js';
 import Home from './screens/Home.js';
 import Friends from './screens/Friends.js';
+import CustomCamera from './screens/CustomCamera.js';
 
 import Tabs from './navigation/tabs';
 
@@ -38,6 +39,11 @@ const Auth = () => {
       <Stack.Screen
         name="Home"
         component={Home}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Camera"
+        component={CustomCamera}
         options={{headerShown: false}}
       />
     </Stack.Navigator> 
