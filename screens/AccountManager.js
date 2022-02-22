@@ -73,7 +73,13 @@ const getUserData = async () => {
               password: userInfo.password
             })
           });
-          
+
+          // when user updates their details theyre logged out for security 
+          await fetch(`http://localhost:3333/api/1.0.0/logout`,
+          {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+          });
           await CustomAsyncStorage.removeData();
           navigation.navigate("Login");
           }

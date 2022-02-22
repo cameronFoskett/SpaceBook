@@ -90,6 +90,11 @@ async function handleCreatePost(){
 
 async function handleLogout(){
   try{
+    await fetch(`http://localhost:3333/api/1.0.0/logout`,
+          {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+          });
     await CustomAsyncStorage.removeData();
     navigation.navigate("Login");
   }
