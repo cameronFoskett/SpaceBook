@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Image, View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
@@ -39,6 +39,21 @@ const getUserData = async () => {
   }
 }
 
+const addFriend = async (id) => {
+  if(id){
+    try{
+        const response = await fetch(`http://localhost:3333/api/1.0.0/friendrequests/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+            });
+        console.log(response,'resonse')
+    }
+    catch(e){
+      console.log(e);
+    }
+  }
+}
+
 const findUsers = async () => {
   setFoundUsers(null);
   try {
@@ -53,12 +68,14 @@ const findUsers = async () => {
           }
           catch(e){
             console.log(e);
+            setFoundUsers('');
           }
       }
 
 useEffect(() =>{
     getUserData();
     findUsers();
+    addFriend();
 }, []);
 
   
@@ -76,24 +93,31 @@ useEffect(() =>{
   }
 
   const LoadSearch = () => {
-    if(foundUsers){
+    console.log('foundusers', foundUsers)
+    if(foundUsers !== ''){
       for (let i = 0; i < foundUsers.length; i++) {
           return foundUsers.map((f) =>
           <View style={styles.friendBox} key={f.user_id}>
             <Text style={styles.textBox}>{f.user_givenname} {f.user_familyname}</Text>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onClick={addFriend}>
               <Image source={require('../assets/add-user.png')} style={styles.image} />
             </TouchableOpacity>
           </View>
           );
       }
     }
-    else {return null}
+    else{
+      return(
+          <View style={styles.friendBox}>
+            <Text style={styles.textBox}>I'm sorry there are no results for your search</Text>
+          </View>
+      );
+    }
   }
 
   return (
     <>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         {loading ? <Text> ...Loading </Text> :
         <>
           <View style={styles.inputView}>
@@ -121,7 +145,7 @@ useEffect(() =>{
         } 
         </>
         }
-      </View>
+      </ScrollView>
     </>
   );
 }
@@ -140,7 +164,7 @@ const styles = StyleSheet.create({
     marginBottom:5,
     backgroundColor: '#518abc',
     borderRadius:20,
-    height:"10%",
+    height:100,
     flexDirection: 'row',
     
   },
