@@ -10,6 +10,7 @@ import Home from './screens/Home.js';
 import Friends from './screens/Friends.js';
 import CustomCamera from './screens/CustomCamera.js';
 import FriendProfile from './screens/FriendProfile.js';
+import PostView from './screens/PostView.js';
 
 import Tabs from './navigation/tabs';
 
@@ -46,6 +47,11 @@ const Auth = () => {
         name="FriendProfile"
         component={FriendProfile}
         initialParams={{ friendID: 42 }}
+      />
+      <Stack.Screen
+        name="PostView"
+        component={PostView}
+        initialParams={{ postID: 42 }}
       />
       <Stack.Screen
         name="Camera"

@@ -95,8 +95,8 @@ async function handleLogout(){
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
           });
-    await CustomAsyncStorage.removeData();
-    navigation.navigate("Login");
+      await CustomAsyncStorage.removeData();
+      navigation.navigate("Login");
   }
   catch(e){
     console.log(e)
@@ -146,14 +146,13 @@ useEffect(() =>{
               data={posts}
               extraData={{refresh}}
               renderItem={({item}) => 
-                <View style={styles.postBox} key={item.post_id}>
+                <TouchableOpacity style={styles.postBox} key={item.post_id}  onPress={() => navigation.navigate('PostView',{postID: item.post_id})}>
                   <Text>
                     {item.author.first_name} {item.author.last_name} Posted on: {new Date (item.timestamp).toLocaleDateString()}
                   </Text>
                   <Text style={styles.text}>{item.text}</Text>
                   <Text style={styles.likes}>Likes: {item.numLikes}</Text>
-                  
-                </View>
+                </TouchableOpacity>
                 }
             />
           </ScrollView>
