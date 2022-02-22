@@ -8,7 +8,7 @@ import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 import Tabs from '../navigation/tabs';
 
-const Profile = () => {
+const Profile = ({navigation}) => {
 
   const [userData, setUserData] = useState('');
   const [userPhoto, setUserPhoto] = useState('');
@@ -88,6 +88,16 @@ async function handleCreatePost(){
   }
 }
 
+async function handleLogout(){
+  try{
+    await CustomAsyncStorage.removeData();
+    navigation.navigate("Login");
+  }
+  catch(e){
+    console.log(e)
+  }
+}
+
 useEffect(() =>{
     getUserData();
 }, [refresh]);
@@ -105,6 +115,9 @@ useEffect(() =>{
               style={styles.image}
             />       
             <Text style={styles.name}>{userData.first_name} {userData.last_name}</Text>
+            <TouchableOpacity style={styles.logout} onPress={handleLogout}> 
+                <Image source={require('../assets/logout.png')} style={styles.logoutImage}/>
+            </TouchableOpacity> 
             </>
           </View>
           <ScrollView style={styles.body}>
@@ -169,11 +182,20 @@ const styles = StyleSheet.create({
       flexDirection:"row", 
       position: 'relative',
   },
+  logoutImage: {
+    width:30,
+    height:30,
+  },
+  logout:{
+    marginLeft: 'auto',
+    top: '-20%',
+    marginRight:10,
+  },
   name: {
       textAlign: 'right',
       color: '#2f5476',
       paddingTop: '8%',
-      paddingLeft:"10%",
+      paddingLeft:"5%",
       fontWeight: 'bold',
       fontSize: '2rem',
     },

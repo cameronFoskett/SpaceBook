@@ -12,4 +12,8 @@ export const getData = async () => {
       return data;
 }
 
+export const removeData = async () => {
+    await AsyncStorage.removeItem('@spacebook_details');
+}
+
 export default saveData;
