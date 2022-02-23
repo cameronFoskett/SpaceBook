@@ -82,6 +82,7 @@ async function handleCreatePost(){
                });
                setNewPost('');
                setRefresh(!refresh);
+              getUserData();
     }
   catch(e){
     console.log("An error occurred posting!")
@@ -104,8 +105,10 @@ async function handleLogout(){
 }
 
 useEffect(() =>{
-    getUserData();
-}, [refresh]);
+    const unsubscribe = navigation.addListener('focus', () => {
+        getUserData();
+      });
+}, [refresh, navigation]);
 
   return (
       <View style={styles.container}>
