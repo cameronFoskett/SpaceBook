@@ -39,14 +39,13 @@ const getUserData = async () => {
   }
 }
 
-const addFriend = async (id) => {
+async function addFriend(id){
   if(id){
     try{
         const response = await fetch(`http://localhost:3333/api/1.0.0/friendrequests/${id}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
             });
-        console.log(response,'resonse')
     }
     catch(e){
       console.log(e);
@@ -73,10 +72,13 @@ const findUsers = async () => {
       }
 
 useEffect(() =>{
-    getUserData();
+    const unsubscribe = navigation.addListener('focus', () => {
+        getUserData();
+      });
+      return unsubscribe;
     findUsers();
     addFriend();
-}, []);
+}, [navigation]);
   
   const LoadFriends = () => {
     for (let i = 0; i < friends.length; i++) {
@@ -92,13 +94,12 @@ useEffect(() =>{
   }
 
   const LoadSearch = () => {
-    console.log('foundusers', foundUsers)
     if(foundUsers !== ''){
       for (let i = 0; i < foundUsers.length; i++) {
           return foundUsers.map((f) =>
           <View style={styles.friendBox} key={f.user_id}>
             <Text style={styles.textBox}>{f.user_givenname} {f.user_familyname}</Text>
-            <TouchableOpacity style={styles.button} onClick={addFriend}>
+            <TouchableOpacity style={styles.button} onPress={()=>addFriend(f.user_id)}>
               <Image source={require('../assets/add-user.png')} style={styles.image} />
             </TouchableOpacity>
           </View>
@@ -127,10 +128,10 @@ useEffect(() =>{
                 onChangeText={(searchCriteria) => setSearchCriteria(searchCriteria)}
                 value={searchCriteria}
             />
-            <TouchableOpacity style={styles.searchButton} onPress={findUsers}> 
+            <TouchableOpacity style={styles.searchButton} onPress={()=>findUsers}> 
               <Image source={require('../assets/search.png')} style={styles.image}/>
             </TouchableOpacity>
-        </View> 
+        </View>
         {!foundUsers ? 
           <>
             <Text style={styles.textBox}>Friends List </Text>
@@ -142,6 +143,9 @@ useEffect(() =>{
             <LoadSearch/>
           </>
         } 
+        <TouchableOpacity style={styles.friendRequestsBtn} onPress={() => navigation.navigate('FriendRequests')}>
+              <Text>Friend Requests</Text>
+        </TouchableOpacity> 
         </>
         }
       </ScrollView>
@@ -166,6 +170,15 @@ const styles = StyleSheet.create({
     height:100,
     flexDirection: 'row',
     
+  },
+  friendRequestsBtn: {
+    width: "80%",
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    backgroundColor: "#2f5476",
   },
   textBox:{
     fontSize:"1.5rem",
