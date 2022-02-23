@@ -80,7 +80,7 @@ async function handleEditPost(){
               <Text style={styles.createText}>Edit your post..
                 <TouchableOpacity style={styles.postButton} onPress={handleEditPost}>
                   <Text>
-                    Post
+                    Update your post
                   </Text>
                 </TouchableOpacity>
               </Text>

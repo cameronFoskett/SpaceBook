@@ -128,7 +128,7 @@ useEffect(() =>{
                 onChangeText={(searchCriteria) => setSearchCriteria(searchCriteria)}
                 value={searchCriteria}
             />
-            <TouchableOpacity style={styles.searchButton} onPress={()=>findUsers}> 
+            <TouchableOpacity style={styles.searchButton} onPress={()=>findUsers()}> 
               <Image source={require('../assets/search.png')} style={styles.image}/>
             </TouchableOpacity>
         </View>
