@@ -57,6 +57,7 @@ const rejectRequest = async (id) => {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
         });
+        setRefresh(!refresh);
   }catch(e){
     console.log(e);
   }

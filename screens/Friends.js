@@ -81,6 +81,7 @@ useEffect(() =>{
 }, [navigation]);
   
   const LoadFriends = () => {
+    if(friends.length==0){return <Text> It seems you dont have any friends yet! </Text> }
     for (let i = 0; i < friends.length; i++) {
         return friends.map((f) =>
         <TouchableOpacity 
