@@ -149,7 +149,7 @@ useEffect(() =>{
               data={posts}
               extraData={{refresh}}
               renderItem={({item}) => 
-                <TouchableOpacity style={styles.postBox} key={item.post_id}  onPress={() => navigation.navigate('PostView',{postID: item.post_id})}>
+                <TouchableOpacity style={styles.postBox} key={item.post_id}  onPress={() => navigation.navigate('PostView',{postID: item.post_id, ID: auth.id})}>
                   <Text>
                     {item.author.first_name} {item.author.last_name} Posted on: {new Date (item.timestamp).toLocaleDateString()}
                   </Text>

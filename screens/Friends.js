@@ -86,11 +86,15 @@ useEffect(() =>{
         <TouchableOpacity 
           style={styles.friendBox} 
           key={f.user_id} 
-          onPress={() => navigation.navigate('FriendProfile',{friendID: f.user_id})}>
+          onPress={()=> {navUser(f.user_id)}}>
           <Text style={styles.textBox}>{f.user_givenname} {f.user_familyname}</Text>
         </TouchableOpacity>
         );
     }
+  }
+
+  function navUser(friendID){
+    navigation.navigate('FriendProfile', {friendID});
   }
 
   const LoadSearch = () => {

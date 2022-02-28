@@ -8,7 +8,7 @@ import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 import Tabs from '../navigation/tabs';
 
-const FriendProfile = (friendID) => {
+const FriendProfile = ({route, navigation}) => {
 
   const [userData, setUserData] = useState('');
   const [userPhoto, setUserPhoto] = useState('');
@@ -17,7 +17,7 @@ const FriendProfile = (friendID) => {
   const [newPost, setNewPost] = useState('');
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
-  const friend_id = friendID.route.params.friendID;
+  const friend_id = route.params.friendID;
 
 const getUserData = async () => {
   try {
@@ -102,6 +102,25 @@ useEffect(() =>{
     setRefresh(!refresh);
   }
 
+  async function handleCreatePost(){
+  try{
+      await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post`,
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+                  body: JSON.stringify({
+                      text: newPost
+                    })
+               });
+               setNewPost('');
+               setRefresh(!refresh);
+              getUserData();
+    }
+  catch(e){
+    console.log("An error occurred posting!")
+  }
+}
+
   return (
       <View style={styles.container}>
           {loading ? <Text> ...Loading </Text> :
@@ -117,6 +136,22 @@ useEffect(() =>{
             <Text style={styles.name}>{userData.first_name} {userData.last_name}</Text>
             </>
           </View>
+          <View style={styles.createPost}>
+          <Text style={styles.createText}>Create new post! 
+            <TouchableOpacity style={styles.postButton} onPress={handleCreatePost}>
+              <Text>
+                Post
+              </Text>
+            </TouchableOpacity>
+          </Text>
+          <TextInput
+                style={styles.TextInput}
+                placeholder="Start jotting down your out of the world thoughts..."
+                placeholderTextColor="#003f5c"
+                onChangeText={(newPost) => setNewPost(newPost)}
+                value={newPost}
+            />
+            </View>
           <ScrollView style={styles.body}>
             <FlatList
               data={posts}
@@ -125,8 +160,15 @@ useEffect(() =>{
                 <View style={styles.postBox} key={item.post_id}>
                   <Text>
                     {item.author.first_name} {item.author.last_name} Posted on: {new Date (item.timestamp).toLocaleDateString()}
+                    {item.author.user_id == auth.id && 
+                    <TouchableOpacity style={styles.edit} onPress={() => navigation.navigate('PostView',{postID: item.post_id, ID: userData.user_id})}>
+                      <Text>Edit</Text>
+                    </TouchableOpacity>
+                  }
                   </Text>
-                  <Text style={styles.text}>{item.text}</Text>
+                  <Text style={styles.text}>
+                  {item.text}
+                  </Text>
                   <Text style={styles.likes}>Likes: {item.numLikes}</Text>
                   <TouchableOpacity style={styles.button} onPress={()=>handleLike(item.post_id)}>
                     <Image source={require('../assets/like.png')} style={styles.likeImage} />
@@ -152,6 +194,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius:"50%",
+    marginBottom:"5%",
   },
   likeImage:{
     width:20,
@@ -217,6 +260,8 @@ const styles = StyleSheet.create({
     borderRadius:10,
     padding:10,
   },
+  edit:{position: 'absolute',
+    right: 20,},
   postButton:{  
     position: 'absolute',
     right: 20,

@@ -8,14 +8,15 @@ import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 import Tabs from '../navigation/tabs';
 
-const PostView = (postID) => {
+const PostView = (route) => {
 
   const [userData, setUserData] = useState('');
   const [auth, setAuth] = useState('');
-  const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState('');
   const [loading, setLoading] = useState(true);
-  const post_id = postID.route.params.postID;
+  const [allow,setAllow] = useState(false);
+  const post_id = route.route.params.postID;
+  const user_id = route.route.params.ID;
 
 const getPostData = async () => {
   try {
@@ -23,7 +24,7 @@ const getPostData = async () => {
     if (data !== null) {
       setAuth(data);
       try{
-        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}/post/${post_id}`,
+        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${user_id}/post/${post_id}`,
         {
             method: 'GET',
             headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
@@ -49,7 +50,7 @@ useEffect(() =>{
 
 async function handleEditPost(){
   try{
-      await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}/post/${post_id}`,
+      await fetch(`http://localhost:3333/api/1.0.0/user/${user_id}/post/${post_id}`,
                 {
                   method: 'PATCH',
                   headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
@@ -58,6 +59,21 @@ async function handleEditPost(){
                     })
                });
                setNewPost('');
+    }
+  catch(e){
+    console.log("An error occurred posting!")
+  }
+}
+
+async function handleDeletePost(){
+  try{
+      await fetch(`http://localhost:3333/api/1.0.0/user/${user_id}/post/${post_id}`,
+                {
+                  method: 'Delete',
+                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+               });
+               setNewPost('');
+               setAllow(!allow);
     }
   catch(e){
     console.log("An error occurred posting!")
@@ -78,11 +94,16 @@ async function handleEditPost(){
               </View>  
             <View style={styles.createPost}>
               <Text style={styles.createText}>Edit your post..
-                <TouchableOpacity style={styles.postButton} onPress={handleEditPost}>
+                <TouchableOpacity disabled={allow} style={[styles.postButton, allow && styles.pressed]} onPress={handleEditPost}>
                   <Text>
                     Update your post
                   </Text>
                 </TouchableOpacity>
+              <TouchableOpacity style={styles.deleteButton} onPress={handleDeletePost}>
+                <Text>
+                  Delete
+                </Text>
+              </TouchableOpacity>
               </Text>
               <TextInput
                     style={styles.TextInput}
@@ -117,7 +138,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#9FD2FF',
   },
   body:{
-    paddingTop:"10%",
     flex: 1,
   },
   postBox: {
@@ -153,6 +173,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#2f5476',
     color: 'white',
     padding:5,
+  },
+  pressed:{    backgroundColor: '#000',
+},
+  deleteButton:{  
+    backgroundColor: 'red',
+    color: 'white',
+    padding:5,
+    left:"7%",
   },
   button: {
     marginLeft: 'auto',

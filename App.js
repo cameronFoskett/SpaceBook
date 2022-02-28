@@ -47,12 +47,10 @@ const Auth = () => {
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfile}
-        initialParams={{ friendID: 42 }}
       />
       <Stack.Screen
         name="PostView"
         component={PostView}
-        initialParams={{ postID: 42 }}
       />
       <Stack.Screen
         name="Camera"
