@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import validator from 'validator';
 import {
   BrowserRouter as Router,
   Switch,
@@ -18,38 +19,39 @@ export default function Login() {
   const [surname, setSurname] = useState('');
 
   const [error, setError] = useState('');
-//   const [userData, setUserData] = useState(
-//     {
-//         email:'', 
-//         password:'', 
-//         firstname:'', 
-//         surname:''
-//     });
 
   async function handleLogin(){
-
-    const response = await fetch("http://localhost:3333/api/1.0.0/user",
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        first_name: firstname,
-        last_name: surname,
-        email: email,
-        password: password
-      })
-    })
-    .catch((error) => {
-      console.error("error");
-      setError(error);
-    });
-    const data = await response.json();
-    console.log(data);
-    if(!data){
-        setError('An error occured please try again...');
-    }
-    else {
-        return response;
+    if(email == '' || password == '' || firstname == '' || surname == ''){setError('Please fill in each field.')}
+      else{
+      if(validator.isEmail(email)){
+        if(validator.isStrongPassword(password)){
+          const response = await fetch("http://localhost:3333/api/1.0.0/user",
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              first_name: firstname,
+              last_name: surname,
+              email: email,
+              password: password
+            })
+          })
+          .catch((error) => {
+            console.error("error");
+            setError(error);
+          });
+          const data = await response.json();
+          console.log(data);
+          if(!data){
+              setError('An error occured please try again...');
+          }
+          else {
+              return response;
+          }
+        }
+        else{setError('Please provide a stronger password');}
+      }
+      else{setError('Please provide a valid email');}
     }
   }
 
@@ -91,7 +93,7 @@ export default function Login() {
             onChangeText={(password) => setPassword(password)}
           />
         </View>  
-        {error && <Text>{error}</Text>}
+        {!!error && <Text style={styles.error}>{error}</Text>}
         <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
           <Text style={styles.loginText}>SIGN UP</Text>
         </TouchableOpacity> 
@@ -105,6 +107,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100px',
     backgroundColor: 'blue',
+  },
+  error: {
+    color: 'red',
   },
   image: {
     marginBottom: 40,  

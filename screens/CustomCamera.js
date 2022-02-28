@@ -36,9 +36,23 @@ export default function CustomCamera({navigation}) {
             method: 'POST',
             headers: { 'Content-Type': 'image/png', 'X-Authorization':userData.token},
             body: blob,
+        }).then((response) => {
+          console.log(response)
+          if(response.status == '200'){
+            navigation.navigate("Profile");        
+            return response;  
+          }
+          else if(response.status == '400'){
+            alert(`Sorry that picture didn't work! Please try again`)
+          }
+          else if(response.status == '500'){
+            alert(`Sorry there seems to be an issue with our server.`)
+          } 
+          else if(response.status == '401'){
+            alert(`It seems you are not authorised to do that, try logging in first!`)
+          }
+          return null;
         });
-        navigation.navigate("Profile");        
-        return response;    
     } catch (e) {
         console.log(e);
     }

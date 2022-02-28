@@ -30,21 +30,29 @@ const storeData = async (value) => {
                 email: email,
                 password: password
             })
+        }).then(async(response) => {
+          if(response.status == '200'){
+            const data = await response.json();
+            storeData(data);
+
+            navigation.navigate('Home');
+
+            setEmail('');
+            setPassword('');
+            setError('');
+
+            return response;  
+          }
+          else if(response.status == '400') {
+            setError('The details you entered seem to be incorrect');
+          }
+          else if(response.status == '500') {
+            setError('Something server side went astray! Try back with us later.');
+          }
         });
-        const data = await response.json();
-        storeData(data);
-
-        navigation.navigate('Home');
-
-        setEmail('');
-        setPassword('');
-        setError('');
-
-        return response;    
     } catch (e) {
         setError('An error occured please try again...');
     }
-
     return null;
   }
 

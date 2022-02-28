@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Image, View, Text, TouchableOpacity, TextInput } from 'react-native';
 import {ImagePicker, launchImageLibrary} from 'react-native-image-picker';
+import validator from 'validator';
 import { Camera } from 'expo-camera';
 
 import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
@@ -42,7 +43,7 @@ const getUserData = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if(status === 'granted'){
       navigation.navigate('Camera');
-    }
+    }else{setError('You need to allow camera access for this feature')}
   }
 
   async function handleUpdateUserInfo(){
@@ -54,38 +55,41 @@ const getUserData = async () => {
     if(userInfo.lastname === ''){
         userInfo.lastname = userData.last_name;
     }
-    if(userInfo.email === ''){
-        userInfo.email = userData.email;
+    if(validator.isStrongPassword(userInfo.password)){
+      if(validator.isEmail(userInfo.email)){
+        if(userInfo.email === ''){
+            userInfo.email = userData.email;
+        }
+        if(userInfo.password === ''){
+            userInfo.password = userData.password;
+        }
+        try{
+            const updateUser = await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}`,
+              {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+                body: JSON.stringify({
+                  first_name: userInfo.firstname,
+                  last_name: userInfo.lastname,
+                  email: userInfo.email,
+                  password: userInfo.password
+                })
+              });
 
-    }
-    if(userInfo.password === ''){
-        userInfo.password = userData.password;
-    }
-    try{
-        const updateUser = await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}`,
-          {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-            body: JSON.stringify({
-              first_name: userInfo.firstname,
-              last_name: userInfo.lastname,
-              email: userInfo.email,
-              password: userInfo.password
-            })
-          });
-
-          // when user updates their details theyre logged out for security 
-          await fetch(`http://localhost:3333/api/1.0.0/logout`,
-          {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-          });
-          await CustomAsyncStorage.removeData();
-          navigation.navigate("Login");
-          }
-    catch (e) {
-        console.log(e);
-    }
+              // when user updates their details theyre logged out for security 
+              await fetch(`http://localhost:3333/api/1.0.0/logout`,
+              {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+              });
+              await CustomAsyncStorage.removeData();
+              navigation.navigate("Login");
+              }
+        catch (e) {
+            console.log(e);
+        }
+      }
+    }else{setError('Please try again, your password/ email needs to be changed')}
   }
 
 useEffect(() =>{
@@ -125,6 +129,7 @@ useEffect(() =>{
                 placeholderTextColor="#003f5c"
                 onChange={e => changeHandler(e,'password')}
         />
+        {!!error && <Text style={styles.error}>{error}</Text>}
         <TouchableOpacity style={styles.button}><Text style={styles.buttonText} onPress={handleUpdateUserInfo}> Update your details </Text></TouchableOpacity>
        <TouchableOpacity style={styles.button}><Text style={styles.buttonText} onPress={handleChoosePhoto}> Update Profile Picture </Text></TouchableOpacity>
       </View>
@@ -171,5 +176,8 @@ const styles = StyleSheet.create({
   buttonText:{
     color:'white',
     fontSize:'1.1rem',
+  },
+  error:{
+    color:'red',
   },
 });

@@ -107,9 +107,18 @@ async function handleLogout(){
           {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+          }).then(async (response)=>{
+          if(response.status == '500') {
+              alert('Something server side went astray! Try back with us later.');
+          }
+          else if(response.status == '400') {
+              alert('Somehow youre trying to logout without being logged in... stop doing that');
+          }
+          else{
+            await CustomAsyncStorage.removeData();
+            navigation.navigate("Login");
+          }
           });
-      await CustomAsyncStorage.removeData();
-      navigation.navigate("Login");
   }
   catch(e){
     console.log(e)
