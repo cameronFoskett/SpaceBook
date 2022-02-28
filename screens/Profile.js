@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import { StyleSheet, Image, View, Text, FlatList, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, View, Text, FlatList, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -89,6 +89,18 @@ async function handleCreatePost(){
   }
 }
 
+async function handleDraftPost(){ 
+      let drafts = await AsyncStorage.getItem('@draft-posts');
+      if(drafts === null){
+        await AsyncStorage.setItem('@draft-posts',newPost+'§');
+      }
+      else{await AsyncStorage.setItem('@draft-posts', drafts += newPost+'§'); }
+      setNewPost('');
+      alert('Your post has been drafted!');
+
+
+}
+
 async function handleLogout(){
   try{
     await fetch(`http://localhost:3333/api/1.0.0/logout`,
@@ -131,6 +143,11 @@ useEffect(() =>{
           <ScrollView style={styles.body}>
           <View style={styles.createPost}>
           <Text style={styles.createText}>Create new post! 
+          <TouchableOpacity style={styles.draftButton} onPress={handleDraftPost}>
+              <Text>
+                Draft
+              </Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.postButton} onPress={handleCreatePost}>
               <Text>
                 Post
@@ -144,6 +161,9 @@ useEffect(() =>{
                 onChangeText={(newPost) => setNewPost(newPost)}
                 value={newPost}
             />
+            <TouchableOpacity onPress={()=>navigation.navigate('Drafts')}>
+              <Text>See your drafted posts...</Text>
+            </TouchableOpacity>
             </View>
             <FlatList
               data={posts}
@@ -236,10 +256,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius:10,
     padding:10,
+    marginBottom:10,
   },
   postButton:{  
     position: 'absolute',
     right: 20,
+    backgroundColor: '#2f5476',
+    color: 'white',
+    padding:5,
+  },
+  draftButton:{  
+    position: 'absolute',
+    right: 80,
     backgroundColor: '#2f5476',
     color: 'white',
     padding:5,

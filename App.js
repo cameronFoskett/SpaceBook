@@ -12,6 +12,7 @@ import CustomCamera from './screens/CustomCamera.js';
 import FriendProfile from './screens/FriendProfile.js';
 import FriendRequests from './screens/FriendsRequests.js';
 import PostView from './screens/PostView.js';
+import Drafts from './screens/Drafts.js';
 
 import Tabs from './navigation/tabs';
 
@@ -56,6 +57,10 @@ const Auth = () => {
         name="Camera"
         component={CustomCamera}
         options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Drafts"
+        component={Drafts}
       />
       <Stack.Screen
         name="FriendRequests"
