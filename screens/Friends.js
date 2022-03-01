@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Image, View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 
+import * as FriendManagement from '../roots/FriendManagement.js'
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 
 export default function Friends({navigation}) {
-const [auth, setAuth] = useState('');
 const [friends, setFriends] = useState('');
 const [loading, setLoading] = useState(true);
 const [searchCriteria, setSearchCriteria] = useState('');
@@ -14,16 +14,11 @@ const [foundUsers, setFoundUsers] = useState(null);
 const getUserData = async () => {
   try {
     const data = await CustomAsyncStorage.getData();
-      setAuth(data);
       if(data){
         //for some reason i couldnt use data so i had to set a new const
         const userInfo = data;
         try {
-          const response = await fetch(`http://localhost:3333/api/1.0.0/user/${userInfo.id}/friends`,
-          {
-              method: 'GET',
-              headers: { 'Content-Type': 'application/json', 'X-Authorization':userInfo.token},
-          });
+          const response = await FriendManagement.GET_FRIEND_DATA(userInfo.id);
           const data = await response.json();
           setFriends(data);
           setLoading(false);
@@ -41,10 +36,7 @@ const getUserData = async () => {
 async function addFriend(id){
   if(id){
     try{
-        await fetch(`http://localhost:3333/api/1.0.0/user/${id}/friends`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-            });
+        await FriendManagement.ADD_FRIEND(id);
     }
     catch(e){
       console.log(e);
@@ -55,14 +47,9 @@ async function addFriend(id){
 const findUsers = async () => {
   setFoundUsers(null);
   try {
-          const response = await fetch(`http://localhost:3333/api/1.0.0/search?q=${searchCriteria}`,
-          {
-              method: 'GET',
-              headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-          });
+          const response = await FriendManagement.SEARCH(searchCriteria);
           const data = await response.json();
           setFoundUsers(data);
-          
           }
           catch(e){
             console.log(e);

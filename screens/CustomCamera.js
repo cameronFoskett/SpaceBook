@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
-import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
+import * as UserManagement from '../roots/UserManagement.js'
 
 export default function CustomCamera({navigation}) {
   const [hasPermission, setHasPermission] = useState(null);
@@ -25,33 +25,24 @@ export default function CustomCamera({navigation}) {
 
     async function updatePhoto(data){
     try {
-      const userData = await CustomAsyncStorage.getData();
-
       let res = await fetch(data.base64);
       let blob = await res.blob();
-      
-      await fetch(`http://localhost:3333/api/1.0.0/user/${userData.id}/photo`,
-        {
-            method: 'POST',
-            headers: { 'Content-Type': 'image/png', 'X-Authorization':userData.token},
-            body: blob,
-        }).then((response) => {
-          console.log(response)
-          if(response.status == '200'){
-            navigation.navigate("Profile");        
-            return response;  
-          }
-          else if(response.status == '400'){
-            alert(`Sorry that picture didn't work! Please try again`)
-          }
-          else if(response.status == '500'){
-            alert(`Sorry there seems to be an issue with our server.`)
-          } 
-          else if(response.status == '401'){
-            alert(`It seems you are not authorised to do that, try logging in first!`)
-          }
-          return null;
-        });
+
+      const response = await UserManagement.UPDATE_USER_PFP(blob);
+      if(response.status == '200'){
+        navigation.navigate("Profile");        
+        return response;  
+      }
+      else if(response.status == '400'){
+        alert(`Sorry that picture didn't work! Please try again`)
+      }
+      else if(response.status == '500'){
+        alert(`Sorry there seems to be an issue with our server.`)
+      } 
+      else if(response.status == '401'){
+        alert(`It seems you are not authorised to do that, try logging in first!`)
+      }
+      return null;
     } catch (e) {
         console.log(e);
     }

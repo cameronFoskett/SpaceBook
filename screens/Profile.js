@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Image, View, Text, FlatList, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import * as UserManagement from '../roots/UserManagement.js'
+import * as PostManagement from '../roots/PostManagement.js'
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 const Profile = ({navigation}) => {
@@ -20,31 +22,15 @@ const getUserData = async () => {
     if (data !== null) {
       setAuth(data);
       try{
-        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}`,
-        {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
-        });
+        const response = await UserManagement.GET_USER_DATA(data.id);
         const tempUserData = await response.json();
         setUserData(tempUserData);
         try{
-            await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}/photo?`+Date.now(),
-            {
-                method: 'GET',
-                headers: { 'Content-Type': 'image/jpeg', 'X-Authorization':data.token},
-            }).then((res) => {
-                return res.blob();
-              }).then((resBlob) => {
-              let data = URL.createObjectURL(resBlob);
-              setUserPhoto(data);
-              setLoading(false);
-            });
+            let photo = await UserManagement.GET_USER_PFP(data.id);
+            setUserPhoto(photo);
+            setLoading(false);
             try{
-                const userPosts = await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}/post`,
-                {
-                  method: 'GET',
-                  headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
-               });
+                const userPosts = await PostManagement.GET_USER_POSTS(data.id);
                 const tempUserPosts = await userPosts.json();
                 setPosts(tempUserPosts);
               }
@@ -57,7 +43,7 @@ const getUserData = async () => {
         }
       }
       catch (e) {
-        console.log('An error occured please try again...');
+        console.log('An error occured please try again...',e);
     }
     }
   } catch (e) {
@@ -68,20 +54,13 @@ const getUserData = async () => {
 
 async function handleCreatePost(){
   try{
-      await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}/post`,
-                {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-                  body: JSON.stringify({
-                      text: newPost
-                    })
-               });
-               setNewPost('');
-               setRefresh(!refresh);
-              getUserData();
+      await PostManagement.CREATE_POST(newPost, auth.id);
+      setNewPost('');
+      setRefresh(!refresh);
+      getUserData();
     }
   catch(e){
-    console.log("An error occurred posting!")
+    console.log("An error occurred posting!",e)
   }
 }
 
@@ -99,22 +78,18 @@ async function handleDraftPost(){
 
 async function handleLogout(){
   try{
-    await fetch(`http://localhost:3333/api/1.0.0/logout`,
-          {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-          }).then(async (response)=>{
-          if(response.status == '500') {
-              alert('Something server side went astray! Try back with us later.');
-          }
-          else if(response.status == '400') {
-              alert('Somehow youre trying to logout without being logged in... stop doing that');
-          }
-          else{
-            await CustomAsyncStorage.removeData();
-            navigation.navigate("Login");
-          }
-          });
+      const response = await UserManagement.LOGOUT();
+      if(response.status == '500') {
+          alert('Something server side went astray! Try back with us later.');
+      }
+      else if(response.status == '400') {
+          alert('Somehow youre trying to logout without being logged in... stop doing that');
+      }
+      else{
+          await CustomAsyncStorage.removeData();
+          navigation.navigate("Login");
+      }
+          
   }
   catch(e){
     console.log(e)

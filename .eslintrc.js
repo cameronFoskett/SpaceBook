@@ -18,8 +18,8 @@ module.exports = {
         "react"
     ],
      "rules": {
-        "react/prop-types": ["error", { "ignore": ["navigation"] }],
         "no-undef": "off",
-        "react/no-unescaped-entities":"off"
+        "react/no-unescaped-entities":"off",
+        "react/prop-types": "off"
     }
 }

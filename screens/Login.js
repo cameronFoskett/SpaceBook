@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity } from 'react-native';
 
 import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
+import * as UserManagement from '../roots/UserManagement.js'
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 const Login = ({navigation}) => {
@@ -21,15 +22,8 @@ const storeData = async (value) => {
 
   async function handleLogin(){
     try {
-        await fetch("http://localhost:3333/api/1.0.0/login",
-        {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        }).then(async(response) => {
+          const response = await UserManagement.LOGIN(email,password);
+
           if(response.status == '200'){
             const data = await response.json();
             storeData(data);
@@ -48,7 +42,7 @@ const storeData = async (value) => {
           else if(response.status == '500') {
             setError('Something server side went astray! Try back with us later.');
           }
-        });
+        
     } catch (e) {
         setError('An error occured please try again...');
     }

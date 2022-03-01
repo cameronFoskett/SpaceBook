@@ -3,6 +3,8 @@ import { StatusBar } from 'expo-status-bar';
 import validator from 'validator';
 import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity } from 'react-native';
 
+import * as UserManagement from '../roots/UserManagement.js'
+
 import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
 
 export default function Login() {
@@ -18,28 +20,16 @@ export default function Login() {
       else{
       if(validator.isEmail(email)){
         if(validator.isStrongPassword(password)){
-          const response = await fetch("http://localhost:3333/api/1.0.0/user",
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({
-              first_name: firstname,
-              last_name: surname,
-              email: email,
-              password: password
-            })
-          })
-          .catch((error) => {
-            console.error("error");
-            setError(error);
-          });
-          const data = await response.json();
-          console.log(data);
+          const data = await UserManagement.CREATE(firstname, surname, email, password);
           if(!data){
               setError('An error occured please try again...');
           }
           else {
-              return response;
+              setEmail('')
+              setPassword('')
+              setFirstname('')
+              setSurname('')
+              return data;
           }
         }
         else{setError('Please provide a stronger password');}

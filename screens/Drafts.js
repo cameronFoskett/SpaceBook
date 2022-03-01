@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet,  View, Text, FlatList,  ScrollView, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import * as PostManagement from '../roots/PostManagement.js'
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 const Drafts = () => {
@@ -31,18 +32,10 @@ useEffect(() =>{
 
 async function handleCreatePost(post){
   try{
-      await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}/post`,
-                {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-                  body: JSON.stringify({
-                      text: post
-                    })
-               });
-               const a = posts.filter(p => p !== post);
-
-               await AsyncStorage.setItem('@draft-posts',a);
-
+    await PostManagement.CREATE_POST(newPost, auth.id);
+    
+    const a = posts.filter(p => p !== post);
+    await AsyncStorage.setItem('@draft-posts',a);
     }
   catch(e){
     console.log("An error occurred posting!")

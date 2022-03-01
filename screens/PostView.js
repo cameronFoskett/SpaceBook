@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet,  View, Text,  TextInput, ScrollView, TouchableOpacity } from 'react-native';
 
+import * as PostManagement from '../roots/PostManagement.js'
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 const PostView = (route) => {
 
   const [userData, setUserData] = useState('');
-  const [auth, setAuth] = useState('');
   const [newPost, setNewPost] = useState('');
   const [loading, setLoading] = useState(true);
   const [allow,setAllow] = useState(false);
@@ -17,21 +17,16 @@ const getPostData = async () => {
   try {
     const data = await CustomAsyncStorage.getData();
     if (data !== null) {
-      setAuth(data);
       try{
-        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${user_id}/post/${post_id}`,
-        {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
-        });
+        const response = await PostManagement.GET_POST_DATA(user_id,post_id);
         const tempUserData = await response.json();
         setUserData(tempUserData);
         setLoading(false);
         console.log(userData);
       }
       catch (e) {
-        console.log('An error occured please try again...');
-    }
+        console.log('An error occured please try again...',e);
+      }
     }
   } catch (e) {
     alert('Failed to fetch the data from storage')
@@ -45,15 +40,8 @@ useEffect(() =>{
 
 async function handleEditPost(){
   try{
-      await fetch(`http://localhost:3333/api/1.0.0/user/${user_id}/post/${post_id}`,
-                {
-                  method: 'PATCH',
-                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-                  body: JSON.stringify({
-                      text: newPost
-                    })
-               });
-               setNewPost('');
+    await PostManagement.UPDATE_POST(user_id,post_id,newPost);
+    setNewPost('');
     }
   catch(e){
     console.log("An error occurred posting!")
@@ -62,14 +50,11 @@ async function handleEditPost(){
 
 async function handleDeletePost(){
   try{
-      await fetch(`http://localhost:3333/api/1.0.0/user/${user_id}/post/${post_id}`,
-                {
-                  method: 'DELETE',
-                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-               });
-               setNewPost('');
-               setAllow(!allow);
+      await PostManagement.DELETE_POST(user_id,post_id);
+      setNewPost('');
+      setAllow(!allow);
     }
+
   catch(e){
     console.log("An error occurred posting!")
   }

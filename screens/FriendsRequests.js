@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet,  View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 
+import * as FriendManagement from '../roots/FriendManagement.js'
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 
 export default function Friends() {
-const [auth, setAuth] = useState('');
 const [friends, setFriends] = useState([]);
 const [refresh, setRefresh] = useState(false);
 const [loading, setLoading] = useState(true);
@@ -13,16 +13,9 @@ const [loading, setLoading] = useState(true);
 const getUserData = async () => {
   try {
     const data = await CustomAsyncStorage.getData();
-      setAuth(data);
       if(data){
-        //for some reason i couldnt use data so i had to set a new const
-        const userInfo = data;
         try {
-          const response = await fetch(`http://localhost:3333/api/1.0.0/friendrequests`,
-          {
-              method: 'GET',
-              headers: { 'Content-Type': 'application/json', 'X-Authorization':userInfo.token},
-          });
+          const response = await FriendManagement.FRIENDREQUESTS();
           const data = await response.json();
           setFriends(data);
           setLoading(false);
@@ -39,12 +32,8 @@ const getUserData = async () => {
 
 const acceptRequest = async (id) => {
   try{
-    await fetch(`http://localhost:3333/api/1.0.0/friendrequests/${id}`,
-        {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-        });
-        setRefresh(!refresh);
+    await FriendManagement.ACCEPT_REQUEST(id);
+    setRefresh(!refresh);
   }catch(e){
     console.log(e);
   }
@@ -52,12 +41,8 @@ const acceptRequest = async (id) => {
 
 const rejectRequest = async (id) => {
   try{
-    await fetch(`http://localhost:3333/api/1.0.0/friendrequests/${id}`,
-        {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-        });
-        setRefresh(!refresh);
+    await FriendManagement.REJECT_REQUEST(id);
+    setRefresh(!refresh);
   }catch(e){
     console.log(e);
   }

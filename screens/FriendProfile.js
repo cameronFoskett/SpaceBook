@@ -1,9 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Image, View, Text, FlatList, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 
+import * as UserManagement from '../roots/UserManagement.js'
+import * as PostManagement from '../roots/PostManagement.js'
+
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
-const FriendProfile = ({navigation}) => {
+const FriendProfile = ({route, navigation}) => {
 
   const [userData, setUserData] = useState('');
   const [userPhoto, setUserPhoto] = useState('');
@@ -20,38 +23,22 @@ const getUserData = async () => {
     if (data !== null) {
       setAuth(data);
       try{
-        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}`,
-        {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
-        });
+        const response = await UserManagement.GET_USER_DATA(friend_id);
         const tempUserData = await response.json();
         setUserData(tempUserData);
         try{
-            await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/photo?`+Date.now(),
-            {
-                method: 'GET',
-                headers: { 'Content-Type': 'image/jpeg', 'X-Authorization':data.token},
-            }).then((res) => {
-                return res.blob();
-              }).then((resBlob) => {
-              let data = URL.createObjectURL(resBlob);
-              setUserPhoto(data);
-              setLoading(false);
-            });
-            try{
-                const userPosts = await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post`,
-                {
-                  method: 'GET',
-                  headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
-               });
-                const tempUserPosts = await userPosts.json();
-                setPosts(tempUserPosts);
-              }
-              catch (e) {
-                  console.log(e);
-              }
-        }
+          let data = await UserManagement.GET_USER_PFP(friend_id);
+          setUserPhoto(data);
+          setLoading(false);
+          try{
+              const userPosts = await PostManagement.GET_USER_POSTS(friend_id);
+              const tempUserPosts = await userPosts.json();
+              setPosts(tempUserPosts);
+            }
+          catch (e) {
+            console.log(e);
+            }
+          }
         catch (e) {
             console.log(e);
         }
@@ -72,19 +59,13 @@ useEffect(() =>{
 
   const handleLike = async (post_id) => {
      try{
-       await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post/${post_id}/like`,
-          {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-          }).then(async (response)=>{
-            if(response.status == '400'){
-              await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post/${post_id}/like`,
-              {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-              });
-            }
-          });
+      const response = await PostManagement.LIKE(friend_id,post_id);
+      if(response.status != '200'){
+        const res = await PostManagement.DISLIKE(friend_id,post_id);
+        if(res.status != '200'){
+          console.log('An error occured whilst liking the post',e)
+        }
+      }
      }
      catch(e){
        console.log(e);
@@ -94,17 +75,10 @@ useEffect(() =>{
 
   async function handleCreatePost(){
   try{
-      await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post`,
-                {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-                  body: JSON.stringify({
-                      text: newPost
-                    })
-               });
-               setNewPost('');
-               setRefresh(!refresh);
-              getUserData();
+      await PostManagement.CREATE_POST(newPost, friend_id);
+      setNewPost('');
+      setRefresh(!refresh);
+      getUserData();
     }
   catch(e){
     console.log("An error occurred posting!")

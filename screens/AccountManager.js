@@ -4,27 +4,21 @@ import validator from 'validator';
 import { Camera } from 'expo-camera';
 
 import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
+
+import * as UserManagement from '../roots/UserManagement.js';
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 export default function AccountManager({navigation}) {
-const [auth, setAuth] = useState('');
 const [error, setError] = useState('');
 const [userInfo, setUserInfo] = useState({firstname:'',lastname:'',email:'',password:''});
 const [userData, setUserData] = useState([]);
 
 const getUserData = async () => {
   try {
-    const data = await CustomAsyncStorage.getData();
-    if (data !== null) {
-      setAuth(data);
-      const response = await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}`,
-        {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
-        });
-        const tempUserData = await response.json();
-        setUserData(tempUserData);
-    }
+      const response = await UserManagement.GET_USER_DATA();
+      const tempUserData = await response.json();
+      setUserData(tempUserData);
+    
   } catch (e) {
     alert('Failed to fetch the data from storage');
     console.log(e);
@@ -59,27 +53,12 @@ const getUserData = async () => {
             userInfo.password = userData.password;
         }
         try{
-            await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}`,
-              {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-                body: JSON.stringify({
-                  first_name: userInfo.firstname,
-                  last_name: userInfo.lastname,
-                  email: userInfo.email,
-                  password: userInfo.password
-                })
-              });
-
-              // when user updates their details theyre logged out for security 
-              await fetch(`http://localhost:3333/api/1.0.0/logout`,
-              {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-              });
-              await CustomAsyncStorage.removeData();
-              navigation.navigate("Login");
-              }
+            await UserManagement.UPDATE_USER_DATA(userInfo);
+            // when user updates their details theyre logged out for security 
+            await UserManagement.LOGOUT();
+            await CustomAsyncStorage.removeData();
+            navigation.navigate("Login");
+          }
         catch (e) {
             console.log(e);
         }
