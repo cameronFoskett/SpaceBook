@@ -26,9 +26,7 @@ const getUserData = async () => {
         const tempUserData = await response.json();
         setUserData(tempUserData);
         try{
-          console.log('here')
             let photo = await UserManagement.GET_USER_PFP(data.id);
-            console.log(photo);
             setUserPhoto(photo);
             setLoading(false);
             try{
