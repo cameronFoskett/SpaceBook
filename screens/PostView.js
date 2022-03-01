@@ -69,7 +69,7 @@ async function handleDeletePost(){
   try{
       await fetch(`http://localhost:3333/api/1.0.0/user/${user_id}/post/${post_id}`,
                 {
-                  method: 'Delete',
+                  method: 'DELETE',
                   headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
                });
                setNewPost('');

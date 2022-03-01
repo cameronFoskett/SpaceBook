@@ -42,7 +42,7 @@ const getUserData = async () => {
 async function addFriend(id){
   if(id){
     try{
-        const response = await fetch(`http://localhost:3333/api/1.0.0/friendrequests/${id}`, {
+        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${id}/friends`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
             });
