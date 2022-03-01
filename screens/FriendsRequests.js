@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet,  View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 
-export default function Friends({navigation}) {
+export default function Friends() {
 const [auth, setAuth] = useState('');
 const [friends, setFriends] = useState([]);
 const [refresh, setRefresh] = useState(false);

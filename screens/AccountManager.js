@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Image, View, Text, TouchableOpacity, TextInput } from 'react-native';
-import {ImagePicker, launchImageLibrary} from 'react-native-image-picker';
 import validator from 'validator';
 import { Camera } from 'expo-camera';
 
@@ -9,11 +8,8 @@ import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 export default function AccountManager({navigation}) {
 const [auth, setAuth] = useState('');
-const [newPhoto, setNewPhoto] = useState();
-const [hasPermission, setHasPermission] = useState('');
 const [error, setError] = useState('');
 const [userInfo, setUserInfo] = useState({firstname:'',lastname:'',email:'',password:''});
-const [type, setType] = useState(Camera.Constants.Type.back);
 const [userData, setUserData] = useState([]);
 
 const getUserData = async () => {
@@ -47,7 +43,7 @@ const getUserData = async () => {
   }
 
   async function handleUpdateUserInfo(){
-    let body = [];
+
     if(userInfo.firstname === ''){
         userInfo.firstname = userData.first_name;
     }
@@ -63,7 +59,7 @@ const getUserData = async () => {
             userInfo.password = userData.password;
         }
         try{
-            const updateUser = await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}`,
+            await fetch(`http://localhost:3333/api/1.0.0/user/${auth.id}`,
               {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},

@@ -1,20 +1,14 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import { StyleSheet, Image, View, Text, FlatList, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { StyleSheet,  View, Text, FlatList,  ScrollView, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from '@react-navigation/native';
 
-
-import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
-import Tabs from '../navigation/tabs';
 
-const Drafts = ({navigation}) => {
+const Drafts = () => {
 
-  const [userData, setUserData] = useState('');
   const [auth, setAuth] = useState('');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [refresh, setRefresh] = useState(false);
 
 const getUserData = async () => {
   try {

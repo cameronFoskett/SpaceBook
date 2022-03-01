@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
@@ -22,7 +21,7 @@ const storeData = async (value) => {
 
   async function handleLogin(){
     try {
-        const response = await fetch("http://localhost:3333/api/1.0.0/login",
+        await fetch("http://localhost:3333/api/1.0.0/login",
         {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},

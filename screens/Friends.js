@@ -10,7 +10,6 @@ const [friends, setFriends] = useState('');
 const [loading, setLoading] = useState(true);
 const [searchCriteria, setSearchCriteria] = useState('');
 const [foundUsers, setFoundUsers] = useState(null);
-const [showUsers, setShowUsers]= useState(false);
 
 const getUserData = async () => {
   try {
@@ -42,7 +41,7 @@ const getUserData = async () => {
 async function addFriend(id){
   if(id){
     try{
-        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${id}/friends`, {
+        await fetch(`http://localhost:3333/api/1.0.0/user/${id}/friends`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
             });
@@ -76,9 +75,7 @@ useEffect(() =>{
         getUserData();
       });
       return unsubscribe;
-    findUsers();
-    addFriend();
-}, [navigation]);
+      }, [navigation]);
   
   const LoadFriends = () => {
     if(friends.length==0){return <Text> It seems you dont have any friends yet! </Text> }

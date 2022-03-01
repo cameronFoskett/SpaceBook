@@ -1,12 +1,7 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import { StyleSheet, Image, View, Text, FlatList, TextInput, ScrollView, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
+import { StyleSheet,  View, Text,  TextInput, ScrollView, TouchableOpacity } from 'react-native';
 
-
-import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
-import Tabs from '../navigation/tabs';
 
 const PostView = (route) => {
 

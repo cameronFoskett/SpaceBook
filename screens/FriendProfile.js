@@ -1,14 +1,9 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import { StyleSheet, Image, View, Text, FlatList, TextInput, ScrollView, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from '@react-navigation/native';
 
-
-import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
 import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
-import Tabs from '../navigation/tabs';
 
-const FriendProfile = ({route, navigation}) => {
+const FriendProfile = ({navigation}) => {
 
   const [userData, setUserData] = useState('');
   const [userPhoto, setUserPhoto] = useState('');
@@ -77,7 +72,7 @@ useEffect(() =>{
 
   const handleLike = async (post_id) => {
      try{
-       const tryLike = await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post/${post_id}/like`,
+       await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post/${post_id}/like`,
           {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},

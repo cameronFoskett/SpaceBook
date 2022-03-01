@@ -5,7 +5,6 @@ import * as CustomAsyncStorage from '../roots/CustomAsyncStorage.js'
 
 export default function CustomCamera({navigation}) {
   const [hasPermission, setHasPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
   const cameraRef = useRef(null);
 
   useEffect(() => {
@@ -21,7 +20,7 @@ export default function CustomCamera({navigation}) {
                 base64: true,
                 onPictureSaved: (data) => updatePhoto(data)
             };
-            const photo = await cameraRef.current.takePictureAsync(options);
+            await cameraRef.current.takePictureAsync(options);
     }
 
     async function updatePhoto(data){
@@ -30,8 +29,8 @@ export default function CustomCamera({navigation}) {
 
       let res = await fetch(data.base64);
       let blob = await res.blob();
-
-        const response = await fetch(`http://localhost:3333/api/1.0.0/user/${userData.id}/photo`,
+      
+      await fetch(`http://localhost:3333/api/1.0.0/user/${userData.id}/photo`,
         {
             method: 'POST',
             headers: { 'Content-Type': 'image/png', 'X-Authorization':userData.token},

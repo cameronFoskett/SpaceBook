@@ -1,13 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import validator from 'validator';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-} from "react-router-dom";
 import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity } from 'react-native';
 
 import spaceBookLogo from '../assets/SpaceBook-logos.jpeg';
