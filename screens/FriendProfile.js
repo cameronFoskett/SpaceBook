@@ -94,7 +94,6 @@ useEffect(() =>{
                   headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
               });
           const data = await tryLike.json();
-          console.log(data);
         }catch(e){console.log(e);}
        }
        console.log(e);

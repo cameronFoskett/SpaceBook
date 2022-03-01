@@ -140,7 +140,7 @@ useEffect(() =>{
         {!foundUsers ? 
           <>
             <Text style={styles.textBox}>Friends List </Text>
-            <LoadFriends/> 
+              <LoadFriends/> 
           </>
             :
           <>
@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 40,
     backgroundColor: "#2f5476",
+    marginLeft:'10%',
   },
   textBox:{
     fontSize:"1.5rem",

@@ -47,7 +47,6 @@ const getUserData = async () => {
   }
 
   async function handleUpdateUserInfo(){
-    console.log(userInfo);
     let body = [];
     if(userInfo.firstname === ''){
         userInfo.firstname = userData.first_name;

@@ -45,11 +45,9 @@ async function handleCreatePost(post){
                       text: post
                     })
                });
-               const i = posts.indexOf(post);
-               console.log(i)
-               setPosts(posts.filter(p => p !== post));
-               console.log(posts)
-               await AsyncStorage.setItem('@draft-posts',posts);
+               const a = posts.filter(p => p !== post);
+
+               await AsyncStorage.setItem('@draft-posts',a);
 
     }
   catch(e){
