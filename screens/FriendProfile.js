@@ -27,8 +27,8 @@ const getUserData = async () => {
         const tempUserData = await response.json();
         setUserData(tempUserData);
         try{
-          let data = await UserManagement.GET_USER_PFP(friend_id);
-          setUserPhoto(data);
+          let photo = await UserManagement.GET_USER_PFP(friend_id);
+          setUserPhoto(photo);
           setLoading(false);
           try{
               const userPosts = await PostManagement.GET_USER_POSTS(friend_id);

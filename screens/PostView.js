@@ -22,7 +22,6 @@ const getPostData = async () => {
         const tempUserData = await response.json();
         setUserData(tempUserData);
         setLoading(false);
-        console.log(userData);
       }
       catch (e) {
         console.log('An error occured please try again...',e);

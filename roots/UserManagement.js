@@ -63,20 +63,19 @@ export const UPDATE_USER_DATA = async (userInfo) =>{
         return response;
 }
 
-export const GET_USER_PFP = async () => {
+export const GET_USER_PFP = async (id) => {
     const data = await CustomAsyncStorage.getData();
-    console.log(data)
-    await fetch(`http://localhost:3333/api/1.0.0/user/${data.id}/photo?`+Date.now(),
+    let photo;
+    await fetch(`http://localhost:3333/api/1.0.0/user/${id}/photo?`+Date.now(),
         {
             method: 'GET',
             headers: { 'Content-Type': 'image/jpeg', 'X-Authorization':data.token},
         }).then((res) => {
             return res.blob();
         }).then((resBlob) => {
-            let data = URL.createObjectURL(resBlob);
-            console.log(data)
-            return data;
+            photo = URL.createObjectURL(resBlob);
         });
+    return photo;
 }
 
 export const UPDATE_USER_PFP = async (blob) => {
