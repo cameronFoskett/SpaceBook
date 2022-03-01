@@ -81,21 +81,17 @@ useEffect(() =>{
           {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+          }).then(async (response)=>{
+            if(response.status == '400'){
+              await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post/${post_id}/like`,
+              {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
+              });
+            }
           });
-      const data = await tryLike.json();
-      console.log(data);
      }
      catch(e){
-       if(e === "200"){
-         try{
-          const tryDislike = await fetch(`http://localhost:3333/api/1.0.0/user/${friend_id}/post/${post_id}/like`,
-              {
-                  method: 'DELETE',
-                  headers: { 'Content-Type': 'application/json', 'X-Authorization':auth.token},
-              });
-          const data = await tryLike.json();
-        }catch(e){console.log(e);}
-       }
        console.log(e);
      }
     setRefresh(!refresh);
