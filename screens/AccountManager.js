@@ -50,8 +50,6 @@ const getUserData = async () => {
     if(userInfo.password == ''){
         userInfo.password = userData.password;
     }
-    console.log(userInfo)
-    console.log(userData)
     let pass = validator.isStrongPassword(userInfo.password);
     if(pass != null){
       if(validator.isEmail(userInfo.email)){

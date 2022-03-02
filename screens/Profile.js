@@ -64,6 +64,22 @@ async function handleCreatePost(){
   }
 }
 
+const handleLike = async (post_id) => {
+     try{
+      const response = await PostManagement.LIKE(auth.id,post_id);
+      if(response.status != '200'){
+        const res = await PostManagement.DISLIKE(auth.id,post_id);
+        if(res.status != '200'){
+          console.log('An error occured whilst liking the post',e)
+        }
+      }
+     }
+     catch(e){
+       console.log(e);
+     }
+    setRefresh(!refresh);
+  }
+
 async function handleDraftPost(){ 
       let drafts = await AsyncStorage.getItem('@draft-posts');
       if(drafts === null){
@@ -155,6 +171,11 @@ useEffect(() =>{
                   </Text>
                   <Text style={styles.text}>{item.text}</Text>
                   <Text style={styles.likes}>Likes: {item.numLikes}</Text>
+                  {item.author.user_id != auth.id && 
+                  <TouchableOpacity style={styles.button} onPress={()=>handleLike(item.post_id)}>
+                    <Image source={require('../assets/like.png')} style={styles.likeImage} />
+                  </TouchableOpacity>
+                  }
                 </TouchableOpacity>
                 }
             />
@@ -251,5 +272,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#2f5476',
     color: 'white',
     padding:5,
+  },
+  button: {
+    marginLeft: 'auto',
+    marginTop: '7%',
+  },
+  likeImage:{
+    width:20,
+    height:20,
   },
 });

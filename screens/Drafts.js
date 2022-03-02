@@ -48,6 +48,11 @@ async function handleCreatePost(post){
   }
 }
 
+async function handleDeleteDraft(post){
+    const a = posts.filter(p => p !== post);
+    await AsyncStorage.setItem('@draft-posts',a);
+}
+
   return (
       <View style={styles.container}>
           {loading ? <Text> ...Loading </Text> :
@@ -59,9 +64,14 @@ async function handleCreatePost(post){
               renderItem={({item}) => 
                 <View style={styles.postBox}>
                   <Text style={styles.text}>{item}</Text>
-                  <TouchableOpacity onPress={()=>handleCreatePost(item)}>
-                    <Text>Post draft</Text>
-                  </TouchableOpacity>
+                  <View style={styles.buttons}>
+                    <TouchableOpacity onPress={()=>handleCreatePost(item)} style={{marginRight:"30%"}}>
+                      <Text>Post draft</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>handleDeleteDraft(item)}>
+                      <Text style={{color:"red"}}>Delete draft</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
                 }
             />
@@ -79,6 +89,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#6c94ac",    
+  },
+  buttons:{
+    flex:4,
+    flexDirection:"row",
+    justifyContent: "center",
+    alignItems: "self-end"
   },
   head:{
       display: 'flex',
