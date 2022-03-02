@@ -10,14 +10,20 @@ const Drafts = () => {
   const [auth, setAuth] = useState('');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [drafts, setDrafts] = useState(false);
 
 const getUserData = async () => {
   try {
     const data = await CustomAsyncStorage.getData();
     setAuth(data);
-    const draftData = await AsyncStorage.getItem('@draft-posts');
-    let draftArray = draftData.split('§');
-    setPosts(draftArray.slice(0,-1))
+    try{
+      const draftData = await AsyncStorage.getItem('@draft-posts');
+      let draftArray = draftData.split('§');
+      setDrafts(true);
+      setPosts(draftArray.slice(0,-1))
+    }catch{
+        setDrafts(false);
+    }
     setLoading(false);
     
   } catch (e) {
@@ -32,13 +38,13 @@ useEffect(() =>{
 
 async function handleCreatePost(post){
   try{
-    await PostManagement.CREATE_POST(newPost, auth.id);
+    await PostManagement.CREATE_POST(post, auth.id);
     
     const a = posts.filter(p => p !== post);
     await AsyncStorage.setItem('@draft-posts',a);
     }
   catch(e){
-    console.log("An error occurred posting!")
+    console.log("An error occurred posting!",e)
   }
 }
 
@@ -47,6 +53,7 @@ async function handleCreatePost(post){
           {loading ? <Text> ...Loading </Text> :
           <>
           <ScrollView style={styles.body}>
+          {!drafts ? <Text> You have no drafts yet! </Text> :
             <FlatList
               data={posts}
               renderItem={({item}) => 
@@ -58,6 +65,7 @@ async function handleCreatePost(post){
                 </View>
                 }
             />
+          }
           </ScrollView>
           </>
           }
