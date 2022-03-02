@@ -15,7 +15,8 @@ const [userData, setUserData] = useState([]);
 
 const getUserData = async () => {
   try {
-      const response = await UserManagement.GET_USER_DATA();
+      const data = await CustomAsyncStorage.getData();
+      const response = await UserManagement.GET_USER_DATA(data.id);
       const tempUserData = await response.json();
       setUserData(tempUserData);
     
@@ -37,21 +38,23 @@ const getUserData = async () => {
   }
 
   async function handleUpdateUserInfo(){
-
-    if(userInfo.firstname === ''){
+    if(userInfo.firstname == ''){
         userInfo.firstname = userData.first_name;
     }
-    if(userInfo.lastname === ''){
+    if(userInfo.lastname == ''){
         userInfo.lastname = userData.last_name;
     }
-    if(validator.isStrongPassword(userInfo.password)){
+    if(userInfo.email == ''){
+        userInfo.email = userData.email;
+    }
+    if(userInfo.password == ''){
+        userInfo.password = userData.password;
+    }
+    console.log(userInfo)
+    console.log(userData)
+    let pass = validator.isStrongPassword(userInfo.password);
+    if(pass != null){
       if(validator.isEmail(userInfo.email)){
-        if(userInfo.email === ''){
-            userInfo.email = userData.email;
-        }
-        if(userInfo.password === ''){
-            userInfo.password = userData.password;
-        }
         try{
             await UserManagement.UPDATE_USER_DATA(userInfo);
             // when user updates their details theyre logged out for security 
@@ -63,7 +66,7 @@ const getUserData = async () => {
             console.log(e);
         }
       }
-    }else{setError('Please try again, your password/ email needs to be changed')}
+    }else{setError('Please submit your password new or old to authenticate your update.')}
   }
 
 useEffect(() =>{
