@@ -14,6 +14,7 @@ export default function Login() {
   const [surname, setSurname] = useState('');
 
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   async function handleLogin(){
     if(email == '' || password == '' || firstname == '' || surname == ''){setError('Please fill in each field.')}
@@ -29,6 +30,9 @@ export default function Login() {
               setPassword('')
               setFirstname('')
               setSurname('')
+              setSuccess(true)              
+              setError('Account created successfully!');
+
               return data;
           }
         }
@@ -49,6 +53,7 @@ export default function Login() {
             placeholder="Enter your firstname."
             placeholderTextColor="#003f5c"
             onChangeText={(firstname) => setFirstname(firstname)}
+            value={firstname}
           />
         </View> 
         <View style={styles.inputView}>
@@ -57,6 +62,7 @@ export default function Login() {
             placeholder="Enter your surname."
             placeholderTextColor="#003f5c"
             onChangeText={(surname) => setSurname(surname)}
+            value={surname}
           />
         </View> 
         <View style={styles.inputView}>
@@ -65,6 +71,7 @@ export default function Login() {
             placeholder="Enter your email"
             placeholderTextColor="#003f5c"
             onChangeText={(email) => setEmail(email)}
+            value={email}
           />
         </View>
         <View style={styles.inputView}>
@@ -74,9 +81,10 @@ export default function Login() {
             placeholderTextColor="#003f5c"
             secureTextEntry={true}
             onChangeText={(password) => setPassword(password)}
+            value={password}
           />
         </View>  
-        {!!error && <Text style={styles.error}>{error}</Text>}
+        {!!error && <Text style={{color: success ? "green" : "red"}}>{error}</Text>}
         <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
           <Text style={styles.loginText}>SIGN UP</Text>
         </TouchableOpacity> 
@@ -90,9 +98,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100px',
     backgroundColor: 'blue',
-  },
-  error: {
-    color: 'red',
   },
   image: {
     marginBottom: 40,  
