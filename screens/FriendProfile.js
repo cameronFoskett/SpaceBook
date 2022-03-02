@@ -54,8 +54,10 @@ const getUserData = async () => {
 }
 
 useEffect(() =>{
-    getUserData();
-}, [refresh]);
+    navigation.addListener('focus', () => {
+        getUserData();
+      });
+}, [refresh, navigation]);
 
   const handleLike = async (post_id) => {
      try{
