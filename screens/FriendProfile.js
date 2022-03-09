@@ -69,14 +69,14 @@ useEffect(() =>{
       if(response.status != '200'){
         const res = await PostManagement.DISLIKE(friend_id,post_id);
         if(res.status != '200'){
-          console.log('An error occured whilst liking the post',e)
+          console.log('An error occured whilst liking the post')
         }
       }
+      getUserData();
      }
      catch(e){
        console.log(e);
      }
-    setRefresh(!refresh);
   }
 
   async function handleCreatePost(){

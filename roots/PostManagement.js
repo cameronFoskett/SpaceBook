@@ -68,7 +68,7 @@ export const DISLIKE = async (friendID, postID) => {
     const data = await CustomAsyncStorage.getData();
     return await fetch(`http://localhost:3333/api/1.0.0/user/${friendID}/post/${postID}/like`,
         {
-            method: 'POST',
+            method: 'DELETE',
             headers: { 'Content-Type': 'application/json', 'X-Authorization':data.token},
         });
 }
