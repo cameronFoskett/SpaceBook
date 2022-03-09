@@ -14,6 +14,7 @@ const [userInfo, setUserInfo] = useState({firstname:'',lastname:'',email:'',pass
 const [userData, setUserData] = useState([]);
 
 const getUserData = async () => {
+  //gets user information from async storage and server
   try {
       const data = await CustomAsyncStorage.getData();
       const response = await UserManagement.GET_USER_DATA(data.id);
@@ -26,11 +27,13 @@ const getUserData = async () => {
   }
 } 
 
+//change handler acts so i can use one useState for each of my text inputs making it more efficient 
   const changeHandler = (e, name) => {
     setUserInfo({...userInfo, [name]: e.target.value})
   }
   
   async function handleChoosePhoto(){
+    //navigates user to camera page
     const { status } = await Camera.requestCameraPermissionsAsync();
     if(status === 'granted'){
       navigation.navigate('Camera');
@@ -38,6 +41,7 @@ const getUserData = async () => {
   }
 
   async function handleUpdateUserInfo(){
+    //checks if any of the fields are empty and if so it sets the userInfo to the users current info
     if(userInfo.firstname == ''){
         userInfo.firstname = userData.first_name;
     }
@@ -50,6 +54,8 @@ const getUserData = async () => {
     if(userInfo.password == ''){
         userInfo.password = userData.password;
     }
+    //I used validator to check if user has good password and email is valid
+    //https://www.npmjs.com/package/validator
     let pass = validator.isStrongPassword(userInfo.password);
     if(pass != null){
       if(validator.isEmail(userInfo.email)){
@@ -76,6 +82,7 @@ useEffect(() =>{
       <View style={styles.container}>
         <Image source={spaceBookLogo} style={styles.image}/>
         <Text style={styles.title}>Update your account information</Text>
+        {/*Text inputs for each of the areas that can be updated*/}
         <TextInput
                 style={styles.TextInput}
                 name='firstname'
@@ -104,6 +111,7 @@ useEffect(() =>{
                 placeholderTextColor="#003f5c"
                 onChange={e => changeHandler(e,'password')}
         />
+        {/*I had to double negative or i would get error, just checks if error has been set and if so shows the message*/}
         {!!error && <Text style={styles.error}>{error}</Text>}
         <TouchableOpacity style={styles.button}><Text style={styles.buttonText} onPress={handleUpdateUserInfo}> Update your details </Text></TouchableOpacity>
        <TouchableOpacity style={styles.button}><Text style={styles.buttonText} onPress={handleChoosePhoto}> Update Profile Picture </Text></TouchableOpacity>

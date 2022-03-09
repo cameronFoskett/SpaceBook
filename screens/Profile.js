@@ -22,6 +22,7 @@ const getUserData = async () => {
     if (data !== null) {
       setAuth(data);
       try{
+        //gets the user info from the server
         const response = await UserManagement.GET_USER_DATA(data.id);
         const tempUserData = await response.json();
         setUserData(tempUserData);
@@ -54,6 +55,7 @@ const getUserData = async () => {
 
 async function handleCreatePost(){
   try{
+    //tries to create post and then refreshes the flatlist
       await PostManagement.CREATE_POST(newPost, auth.id);
       setNewPost('');
       setRefresh(!refresh);
@@ -66,6 +68,7 @@ async function handleCreatePost(){
 
 const handleLike = async (post_id) => {
      try{
+       //tries to like post, if it is already liked it dislikes the post 
       const response = await PostManagement.LIKE(auth.id,post_id);
       if(response.status != '200'){
         const res = await PostManagement.DISLIKE(auth.id,post_id);
@@ -94,6 +97,7 @@ async function handleDraftPost(){
 
 async function handleLogout(){
   try{
+    //logs user out with some error handling but there should theorectically never be an error here
       const response = await UserManagement.LOGOUT();
       if(response.status == '500') {
           alert('Something server side went astray! Try back with us later.');
@@ -166,11 +170,12 @@ useEffect(() =>{
               extraData={{refresh}}
               renderItem={({item}) => 
                 <TouchableOpacity style={styles.postBox} key={item.post_id}  onPress={() => navigation.navigate('PostView',{postID: item.post_id, ID: auth.id})}>
-                  <Text>
+                  <Text>{/*The timestamp gets converted into a readable date here*/}
                     {item.author.first_name} {item.author.last_name} Posted on: {new Date (item.timestamp).toLocaleDateString()}
                   </Text>
                   <Text style={styles.text}>{item.text}</Text>
                   <Text style={styles.likes}>Likes: {item.numLikes}</Text>
+                  {/*Checks if user id is the same as the author id, if so it doesnt show the like button as user shouldnt be able to like their own post*/}
                   {item.author.user_id != auth.id && 
                   <TouchableOpacity style={styles.button} onPress={()=>handleLike(item.post_id)}>
                     <Image source={require('../assets/like.png')} style={styles.likeImage} />

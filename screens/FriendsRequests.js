@@ -15,6 +15,7 @@ const getUserData = async () => {
     const data = await CustomAsyncStorage.getData();
       if(data){
         try {
+          //gets all the friend requests of the user
           const response = await FriendManagement.FRIENDREQUESTS();
           const data = await response.json();
           setFriends(data);
@@ -32,6 +33,7 @@ const getUserData = async () => {
 
 const acceptRequest = async (id) => {
   try{
+    //accepts the request and refreshes lisst
     await FriendManagement.ACCEPT_REQUEST(id);
     setRefresh(!refresh);
   }catch(e){
@@ -41,6 +43,7 @@ const acceptRequest = async (id) => {
 
 const rejectRequest = async (id) => {
   try{
+    //rejects friend request and refreshes list
     await FriendManagement.REJECT_REQUEST(id);
     setRefresh(!refresh);
   }catch(e){
@@ -95,53 +98,4 @@ const styles = StyleSheet.create({
     borderRadius:20,
     height:120,
   },
-  friendBox: {
-    padding:5,
-    marginTop:10,
-    marginBottom:5,
-    backgroundColor: '#518abc',
-    borderRadius:20,
-    height:100,
-    flexDirection: 'row',
-    
-  },
-  friendRequestsBtn: {
-    width: "80%",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    backgroundColor: "#2f5476",
-  },
-  textBox:{
-    fontSize:"1.5rem",
-
-  },
-  inputView: {
-    backgroundColor: '#518abc',
-    flexDirection:'row',
-    borderRadius: 30,
-    height: 45,
-    marginBottom: 20,
-    alignItems: "left",
-  },
-  TextInput: {
-    height: 50,
-    flex: 1,
-    padding: 10,
-  },
-  image: {
-    width:20,
-    height:20,
-  },
-  button: {
-    marginLeft: 'auto',
-    marginTop: '7%',
-  },
-  searchButton:{
-    marginLeft: 'auto',
-    marginTop: '3%',
-    marginRight:10,
-  }
 });

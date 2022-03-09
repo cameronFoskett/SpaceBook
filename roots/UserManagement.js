@@ -1,3 +1,5 @@
+//Custom page that just handles all the usermanagement api requests to clean up the code
+
 import * as CustomAsyncStorage from './CustomAsyncStorage.js'
 
 export const CREATE = async (firstname, surname, email, password) => {

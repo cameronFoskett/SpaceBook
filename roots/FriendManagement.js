@@ -1,3 +1,5 @@
+//Custom page that just handles all the friendManagement api requests to clean up the code
+
 import * as CustomAsyncStorage from './CustomAsyncStorage.js'
 
 export const GET_FRIEND_DATA = async (id) => {

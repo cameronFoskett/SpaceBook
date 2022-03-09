@@ -16,16 +16,20 @@ export default function Login() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  async function handleLogin(){
+  async function handleCreateUser(){
+    //checks if any of the fields are empty and sets error
     if(email == '' || password == '' || firstname == '' || surname == ''){setError('Please fill in each field.')}
       else{
+      //checks if email provided is valid and password is strong
       if(validator.isEmail(email)){
         if(validator.isStrongPassword(password)){
+          //sends data to api call
           const data = await UserManagement.CREATE(firstname, surname, email, password);
           if(!data){
               setError('An error occured please try again...');
           }
           else {
+            //if successful it clears the fields and shows a success message
               setEmail('')
               setPassword('')
               setFirstname('')
@@ -85,7 +89,7 @@ export default function Login() {
           />
         </View>  
         {!!error && <Text style={{color: success ? "green" : "red"}}>{error}</Text>}
-        <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
+        <TouchableOpacity style={styles.createUserBtn} onPress={handleCreateUser}>
           <Text style={styles.loginText}>SIGN UP</Text>
         </TouchableOpacity> 
       </View>
@@ -94,11 +98,6 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    width: '100%',
-    height: '100px',
-    backgroundColor: 'blue',
-  },
   image: {
     marginBottom: 40,  
     width:'33%',
@@ -118,7 +117,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
-  loginBtn: {
+  createUserBtn: {
     width: "80%",
     borderRadius: 25,
     height: 50,

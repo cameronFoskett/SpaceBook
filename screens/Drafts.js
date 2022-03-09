@@ -65,6 +65,7 @@ async function handleDeleteDraft(post){
 async function handleChangeDate(pickedDate) {
   //used a background service to schedule job and then using the date picker it should
   //be able to run the handleCreatePost call when that date arrives
+  //https://www.npmjs.com/package/node-schedule
   const schedule = require('node-schedule')
 
   schedule.scheduleJob(new Date(pickedDate._d), () =>{

@@ -10,6 +10,7 @@ const PostView = (route) => {
   const [newPost, setNewPost] = useState('');
   const [loading, setLoading] = useState(true);
   const [allow,setAllow] = useState(false);
+  //gets these from the route, as this is the same page that is shown from profile and friend profile
   const post_id = route.route.params.postID;
   const user_id = route.route.params.ID;
 
@@ -18,6 +19,7 @@ const getPostData = async () => {
     const data = await CustomAsyncStorage.getData();
     if (data !== null) {
       try{
+        //gets post data with user info and post info
         const response = await PostManagement.GET_POST_DATA(user_id,post_id);
         const tempUserData = await response.json();
         setUserData(tempUserData);
@@ -39,6 +41,7 @@ useEffect(() =>{
 
 async function handleEditPost(){
   try{
+    //edits the post
     await PostManagement.UPDATE_POST(user_id,post_id,newPost);
     setNewPost('');
     }
@@ -49,6 +52,7 @@ async function handleEditPost(){
 
 async function handleDeletePost(){
   try{
+    //deletes the post
       await PostManagement.DELETE_POST(user_id,post_id);
       setNewPost('');
       setAllow(!allow);
@@ -106,11 +110,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#6c94ac",    
   },
-  image:{
-    width: 100,
-    height: 100,
-    borderRadius:"50%",
-  },
   createPost: {
     height: 150,
     padding: 10,
@@ -125,10 +124,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#9FD2FF',
     borderRadius:20,
     height:120,
-  },
-  likes:{
-    position:'absolute',
-    bottom:10,
   },
   createText:{
     paddingBottom:"5%",
@@ -153,7 +148,8 @@ const styles = StyleSheet.create({
     color: 'white',
     padding:5,
   },
-  pressed:{    backgroundColor: '#000',
+  pressed:{
+    backgroundColor: '#000',
 },
   deleteButton:{  
     backgroundColor: 'red',

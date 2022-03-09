@@ -14,6 +14,7 @@ const Login = ({navigation}) => {
 
 const storeData = async (value) => {
     try {
+      //stores the async storage in a seperate file 
       await CustomAsyncStorage.saveData(value);
     } catch (e) {
         console.error(error);
@@ -22,9 +23,11 @@ const storeData = async (value) => {
 
   async function handleLogin(){
     try {
+      //tries to log user in and if status is not successful it shows the error message
           const response = await UserManagement.LOGIN(email,password);
 
           if(response.status == '200'){
+            //once user has logged in it will store token and id and then navigate to home
             const data = await response.json();
             storeData(data);
 
@@ -96,10 +99,6 @@ const styles = StyleSheet.create({
     width:'33%',
     height:'15%',
     borderRadius: '50%',
-  },
-  forgot_button: {
-    height: 30,
-    marginBottom: 30,
   },
    inputView: {
     backgroundColor: '#518abc',

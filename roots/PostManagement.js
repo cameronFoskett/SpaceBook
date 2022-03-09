@@ -1,3 +1,5 @@
+//Custom page that just handles all the postManagement api requests to clean up the code
+
 import * as CustomAsyncStorage from './CustomAsyncStorage.js'
 
 export const GET_USER_POSTS = async (id) => {

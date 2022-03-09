@@ -8,6 +8,7 @@ export default function CustomCamera({navigation}) {
   const cameraRef = useRef(null);
 
   useEffect(() => {
+    //checks if the app has access to camera at all times
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
@@ -15,6 +16,7 @@ export default function CustomCamera({navigation}) {
   }, []);
 
   async function takePicture(){
+    //takes the picture and sets the photo to the update photo function
             const options = {
                 quality: 0.5, 
                 base64: true,
@@ -25,9 +27,11 @@ export default function CustomCamera({navigation}) {
 
     async function updatePhoto(data){
     try {
+      //converts to blob as didnt work unless doing so
       let res = await fetch(data.base64);
       let blob = await res.blob();
 
+      //tries to update user pfp and the status replied will navigate the user or give error
       const response = await UserManagement.UPDATE_USER_PFP(blob);
       if(response.status == '200'){
         navigation.navigate("Profile");        
@@ -42,11 +46,9 @@ export default function CustomCamera({navigation}) {
       else if(response.status == '401'){
         alert(`It seems you are not authorised to do that, try logging in first!`)
       }
-      return null;
     } catch (e) {
         console.log(e);
     }
-
     return null;
   }
 

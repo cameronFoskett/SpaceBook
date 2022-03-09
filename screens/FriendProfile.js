@@ -23,6 +23,7 @@ const getUserData = async () => {
     if (data !== null) {
       setAuth(data);
       try{
+        //gets all of the friends information to show
         const response = await UserManagement.GET_USER_DATA(friend_id);
         const tempUserData = await response.json();
         setUserData(tempUserData);
@@ -31,6 +32,7 @@ const getUserData = async () => {
           setUserPhoto(photo);
           setLoading(false);
           try{
+            //gets posts of user
               const userPosts = await PostManagement.GET_USER_POSTS(friend_id);
               const tempUserPosts = await userPosts.json();
               setPosts(tempUserPosts);
@@ -54,6 +56,7 @@ const getUserData = async () => {
 }
 
 useEffect(() =>{
+  //if page is focused again it will refresh so the flatlist will update
     navigation.addListener('focus', () => {
         getUserData();
       });
@@ -61,6 +64,7 @@ useEffect(() =>{
 
   const handleLike = async (post_id) => {
      try{
+       //tries to like the post, if theres an error it will try to delete the like as there was no way to check which posts youve liked
       const response = await PostManagement.LIKE(friend_id,post_id);
       if(response.status != '200'){
         const res = await PostManagement.DISLIKE(friend_id,post_id);
@@ -77,6 +81,7 @@ useEffect(() =>{
 
   async function handleCreatePost(){
   try{
+    //sends the post to the api
       await PostManagement.CREATE_POST(newPost, friend_id);
       setNewPost('');
       setRefresh(!refresh);
@@ -119,6 +124,7 @@ useEffect(() =>{
             />
             </View>
           <ScrollView style={styles.body}>
+            {/*Flatlist of all the users posts*/}
             <FlatList
               data={posts}
               extraData={{refresh}}
@@ -178,15 +184,6 @@ const styles = StyleSheet.create({
       flexDirection:"row", 
       position: 'relative',
   },
-  logoutImage: {
-    width:30,
-    height:30,
-  },
-  logout:{
-    marginLeft: 'auto',
-    top: '-20%',
-    marginRight:10,
-  },
   name: {
       textAlign: 'right',
       color: '#2f5476',
@@ -226,8 +223,10 @@ const styles = StyleSheet.create({
     borderRadius:10,
     padding:10,
   },
-  edit:{position: 'absolute',
-    right: 20,},
+  edit:{
+    position: 'absolute',
+    right: 20,
+  },
   postButton:{  
     position: 'absolute',
     right: 20,

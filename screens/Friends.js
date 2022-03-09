@@ -36,6 +36,7 @@ const getUserData = async () => {
 async function addFriend(id){
   if(id){
     try{
+      //sends friend request to the user
         await FriendManagement.ADD_FRIEND(id);
     }
     catch(e){
@@ -47,6 +48,7 @@ async function addFriend(id){
 const findUsers = async () => {
   setFoundUsers(null);
   try {
+    //finds users with the search feature
           const response = await FriendManagement.SEARCH(searchCriteria);
           const data = await response.json();
           setFoundUsers(data);
@@ -64,6 +66,8 @@ useEffect(() =>{
       return unsubscribe;
       }, [navigation]);
   
+  //custom component that returns a list of friends of the user, i did this before i knew about flatlists
+  //but thought it was clever to remove
   const LoadFriends = () => {
     if(friends.length==0){return <Text> It seems you dont have any friends yet! </Text> }
     for (let i = 0; i < friends.length; i++) {
@@ -79,9 +83,10 @@ useEffect(() =>{
   }
 
   function navUser(friendID){
+    //takes user to the friends profile
     navigation.navigate('FriendProfile', {friendID});
   }
-
+  //loads the search results when the user has put some criteria in
   const LoadSearch = () => {
     if(foundUsers !== ''){
       for (let i = 0; i < foundUsers.length; i++) {
@@ -121,6 +126,7 @@ useEffect(() =>{
               <Image source={require('../assets/search.png')} style={styles.image}/>
             </TouchableOpacity>
         </View>
+        {/*Checks if found users exists (e.g. if the user has searched) if not it just displays friends of the user*/}
         {!foundUsers ? 
           <>
             <Text style={styles.textBox}>Friends List </Text>
