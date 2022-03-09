@@ -1,8 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {StyleSheet, Text, View, Image, TouchableOppacity} from 'react-native';
+import {Text, View, Image} from 'react-native';
 
-import Login from '../screens/Login';
 import AccountManager from '../screens/AccountManager'
 import Friends from '../screens/Friends';
 import Profile from '../screens/Profile';
@@ -18,6 +17,7 @@ const Tabs = () => {
             screenOptions={{
                 tabBarShowLabel: false,
                 headerShown: false,
+                //I had to use styling here as I couldnt get the stylesheet to work with this tab navigator
                 tabBarStyle:{
                     position: 'absolute',
                     bottom:25,
@@ -27,16 +27,15 @@ const Tabs = () => {
                     backgroundColor: '#ffffff',
                     borderRadius: 15,
                     height: 90,
-                    ...styles.shadow
                 },
             }}
         >
             <Tab.Screen name="Profile" component={Profile} options={{
+                //Each tab passes in focused to check if the tab is active and if so it changes colour of the icon 
                 tabBarIcon: ({focused}) =>(
                     <View style={{alignItems:'center', justifyContent:'center', top:10}}>
                     <Image 
                     source={require('../assets/home.png')}
-                    resizeMode = 'contain'
                     style={{
                         width:25,
                         height:25,
@@ -53,7 +52,6 @@ const Tabs = () => {
                     <View style={{alignItems:'center', justifyContent:'center', top:10}}>
                     <Image 
                     source={require('../assets/friends.png')}
-                    resizeMode = 'contain'
                     style={{
                         width:25,
                         height:25,
@@ -70,7 +68,6 @@ const Tabs = () => {
                     <View style={{alignItems:'center', justifyContent:'center', top:10}}>
                     <Image 
                     source={require('../assets/user.png')}
-                    resizeMode = 'contain'
                     style={{
                         width:25,
                         height:25,
@@ -86,18 +83,4 @@ const Tabs = () => {
         </Tab.Navigator>
     );
 }
-
-const styles = StyleSheet.create({
-    shadow:{
-        shadowColor: '#7F5DF0',
-        shadowOffset: {
-            width:0,
-            height:10,
-        },
-        shadowOppacity: 0.25,
-        shadowRadius: 3.5,
-        elevation: 5,
-    }
-});
-
 export default Tabs;
